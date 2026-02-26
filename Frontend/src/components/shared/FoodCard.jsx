@@ -69,8 +69,6 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
                     alt={food.name}
                     className="food-card-img transition-transform duration-500 group-hover:scale-105"
                 />
-                {/* Discount Badge */}
-                <span className="food-card-discount">{food.discount}% OFF</span>
                 {/* Expiry */}
                 <CountdownBadge expiresAt={food.expiresAt} />
                 {/* Favorite */}
@@ -129,8 +127,7 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-[#059669]">₹{food.discountedPrice}</span>
-                        <span className="text-sm text-[#065F46] line-through">₹{food.originalPrice}</span>
+                        <span className="text-sm font-bold text-[#059669] bg-[#D1FAE5] px-2 py-1 rounded-md">100% Free</span>
                     </div>
 
                     {isAuthenticated ? (
@@ -138,8 +135,8 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
                             onClick={handleAddToCart}
                             aria-label="Add to cart"
                             className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${added || isInCart
-                                    ? 'bg-[#D1FAE5] text-[#059669]'
-                                    : 'bg-[#059669] text-white hover:bg-[#047857]'
+                                ? 'bg-[#D1FAE5] text-[#059669]'
+                                : 'bg-[#059669] text-white hover:bg-[#047857]'
                                 }`}
                         >
                             <FiShoppingCart className="w-3.5 h-3.5" />

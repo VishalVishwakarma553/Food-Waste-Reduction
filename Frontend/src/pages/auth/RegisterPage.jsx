@@ -81,8 +81,8 @@ export default function RegisterPage() {
                     <div key={s} className="flex items-start flex-1 last:flex-none">
                         <div className="flex flex-col items-center w-8">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all flex-shrink-0 ${i < step ? 'bg-[#059669] text-white' :
-                                    i === step ? 'bg-[#059669] text-white ring-4 ring-[#D1FAE5]' :
-                                        'bg-[#D1FAE5] text-[#065F46]'
+                                i === step ? 'bg-[#059669] text-white ring-4 ring-[#D1FAE5]' :
+                                    'bg-[#D1FAE5] text-[#065F46]'
                                 }`}>
                                 {i < step ? <FiCheckCircle className="w-4 h-4" /> : i + 1}
                             </div>
@@ -104,8 +104,8 @@ export default function RegisterPage() {
                             key={r.id}
                             onClick={() => update('role', r.id)}
                             className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left ${data.role === r.id
-                                    ? 'border-[#059669] bg-[#F0FDF4] shadow-md'
-                                    : 'border-[#D1FAE5] bg-white hover:border-[#10B981]'
+                                ? 'border-[#059669] bg-[#F0FDF4] shadow-md'
+                                : 'border-[#D1FAE5] bg-white hover:border-[#10B981]'
                                 }`}
                         >
                             <span className="text-3xl">{r.icon}</span>

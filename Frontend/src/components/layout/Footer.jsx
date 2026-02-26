@@ -4,19 +4,19 @@ import { FiMail, FiPhone, FiMapPin, FiFacebook, FiTwitter, FiInstagram, FiLinked
 
 export default function Footer() {
     return (
-        <footer className="bg-[#064E3B] text-white mt-24">
+        <footer className="bg-[#064E3B] text-white mt-16">
             {/* Top CTA Banner */}
-            <div className="gradient-primary py-12">
+            <div className="gradient-primary py-10">
                 <div className="max-w-7xl mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ fontFamily: "'Playfair Display SC', serif" }}>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ fontFamily: "'Playfair Display SC', serif" }}>
                         Together We Can End Food Waste
                     </h2>
-                    <p className="text-lg text-white/80 mb-6">Join 50,000+ people making India's food system more sustainable</p>
+                    <p className="text-base text-white/80 mb-6">Join 50,000+ people making India's food system more sustainable</p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <Link to="/register" className="bg-white text-[#059669] font-bold px-8 py-3 rounded-full hover:bg-opacity-90 transition-all duration-200 shadow-lg cursor-pointer">
+                        {/* <Link to="/register" className="text-sm bg-white text-[#059669] font-semibold px-6 py-2 rounded-full hover:bg-opacity-90 transition-all duration-200 shadow-lg cursor-pointer">
                             Start Saving Food
-                        </Link>
-                        <Link to="/about" className="border-2 border-white text-white font-bold px-8 py-3 rounded-full hover:bg-white/10 transition-all duration-200 cursor-pointer">
+                        </Link> */}
+                        <Link to="/about" className="text-sm border-2 border-white text-white font-semibold px-6 py-2 rounded-full hover:bg-white/10 transition-all duration-200 cursor-pointer">
                             Learn More
                         </Link>
                     </div>

@@ -13,7 +13,6 @@ export default function CheckoutPage() {
     const [placing, setPlacing] = useState(false);
     const [placed, setPlaced] = useState(false);
 
-    const totalSavings = cartItems.reduce((sum, i) => sum + (i.food.originalPrice - i.food.discountedPrice) * i.quantity, 0);
     const foodSaved = cartItems.reduce((sum, i) => sum + 0.4 * i.quantity, 0).toFixed(1);
 
     const handlePlaceOrder = () => {
@@ -137,15 +136,14 @@ export default function CheckoutPage() {
                                         <p className="text-xs font-semibold text-[#064E3B] truncate">{item.food.name}</p>
                                         <p className="text-xs text-[#065F46]">×{item.quantity}</p>
                                     </div>
-                                    <p className="text-sm font-bold text-[#064E3B] shrink-0">₹{item.food.discountedPrice * item.quantity}</p>
+                                    <p className="text-sm font-bold text-[#059669] shrink-0 bg-[#D1FAE5] px-2 py-0.5 rounded">Free</p>
                                 </div>
                             ))}
                         </div>
                         <div className="border-t border-[#D1FAE5] pt-4 space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="text-[#065F46]">Subtotal</span><span>₹{cartTotal}</span></div>
-                            <div className="flex justify-between text-[#059669] font-semibold"><span>Total Savings</span><span>₹{totalSavings}</span></div>
+                            <div className="flex justify-between"><span className="text-[#065F46]">Platform Fee</span><span>₹0</span></div>
                             <div className="flex justify-between font-bold text-[#064E3B] text-base pt-2 border-t border-[#D1FAE5]">
-                                <span>Total</span><span className="text-[#059669]">₹{cartTotal}</span>
+                                <span>Total Cost</span><span className="text-[#059669]">Free</span>
                             </div>
                         </div>
                         <button
@@ -166,7 +164,6 @@ export default function CheckoutPage() {
                         <h4 className="font-bold mb-3">Your Impact</h4>
                         <div className="space-y-2">
                             <div className="flex justify-between"><span className="text-white/80">Food Rescued</span><span className="font-bold">~{foodSaved}kg</span></div>
-                            <div className="flex justify-between"><span className="text-white/80">Money Saved</span><span className="font-bold">₹{totalSavings}</span></div>
                             <div className="flex justify-between"><span className="text-white/80">CO₂ Saved</span><span className="font-bold">~{(foodSaved * 0.4).toFixed(2)}kg</span></div>
                         </div>
                     </div>

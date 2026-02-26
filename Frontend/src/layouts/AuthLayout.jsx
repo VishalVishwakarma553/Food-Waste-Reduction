@@ -24,18 +24,18 @@ export default function AuthLayout() {
 
                 <div className="relative z-10">
                     <h1 className="text-4xl font-bold text-white leading-tight mb-6" style={{ fontFamily: "'Playfair Display SC', serif" }}>
-                        Save Food.<br />Save Money.<br />Save the Planet.
+                        Rescue Food.<br />Feed People.<br />Heal the Planet.
                     </h1>
                     <p className="text-white/80 text-lg leading-relaxed mb-10">
-                        Join 50,000+ Indians reducing food waste and helping communities while saving up to 70% on quality food.
+                        Join 52,000+ Indians rescuing surplus food from restaurants — completely <strong className="text-white">free of charge</strong>. Reserve online, pick up in person.
                     </p>
 
                     {/* Impact Stats */}
                     <div className="grid grid-cols-3 gap-4">
                         {[
-                            { value: '2.4 MT', label: 'Food Saved' },
-                            { value: '12L+', label: 'Meals Provided' },
-                            { value: '₹48Cr', label: 'Consumer Savings' },
+                            { value: '2.4 MT', label: 'Food Rescued' },
+                            { value: '12L+', label: 'Free Meals Shared' },
+                            { value: '4,200+', label: 'Donor Partners' },
                         ].map(({ value, label }) => (
                             <div key={label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
                                 <p className="text-2xl font-bold text-white">{value}</p>

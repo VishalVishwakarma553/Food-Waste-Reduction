@@ -13,7 +13,6 @@ export default function CartPage() {
         setTimeout(() => { removeFromCart(foodId); setRemoving(null); }, 300);
     };
 
-    const totalSavings = cartItems.reduce((sum, i) => sum + (i.food.originalPrice - i.food.discountedPrice) * i.quantity, 0);
     const foodSaved = cartItems.reduce((sum, i) => sum + 0.4 * i.quantity, 0).toFixed(1);
     const co2Saved = (foodSaved * 0.4).toFixed(2);
 
@@ -22,7 +21,7 @@ export default function CartPage() {
             <div className="text-center py-24">
                 <div className="text-8xl mb-6">🛒</div>
                 <h2 className="text-2xl font-bold text-[#064E3B] mb-3">Your cart is empty</h2>
-                <p className="text-[#065F46] mb-8">Discover great food at amazing prices and save it from waste!</p>
+                <p className="text-[#065F46] mb-8">Discover fresh homemade food for free and save it from waste!</p>
                 <Link to="/consumer/listings" className="btn-primary">Browse Food Listings</Link>
             </div>
         );
@@ -76,8 +75,7 @@ export default function CartPage() {
                                             </button>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold text-[#059669]">₹{item.food.discountedPrice * item.quantity}</p>
-                                            <p className="text-xs text-[#065F46] line-through">₹{item.food.originalPrice * item.quantity}</p>
+                                            <p className="font-bold text-[#059669] bg-[#D1FAE5] px-2 py-1 rounded-md text-xs">Free</p>
                                         </div>
                                     </div>
                                 </div>
@@ -95,15 +93,15 @@ export default function CartPage() {
                     <div className="card-flat p-6">
                         <h3 className="font-bold text-[#064E3B] mb-5">Order Summary</h3>
                         <div className="space-y-3 text-sm">
-                            <div className="flex justify-between"><span className="text-[#065F46]">Subtotal</span><span className="text-[#064E3B] font-medium">₹{cartTotal}</span></div>
-                            <div className="flex justify-between text-[#059669]"><span>You Save</span><span className="font-bold">₹{totalSavings}</span></div>
+                            <div className="flex justify-between"><span className="text-[#065F46]">Items</span><span className="text-[#064E3B] font-medium">{cartItems.length}</span></div>
+                            <div className="flex justify-between text-[#059669]"><span>Platform Fee</span><span className="font-bold">₹0</span></div>
                             <div className="border-t border-[#D1FAE5] pt-3 flex justify-between">
-                                <span className="font-bold text-[#064E3B]">Total</span>
-                                <span className="font-bold text-xl text-[#059669]">₹{cartTotal}</span>
+                                <span className="font-bold text-[#064E3B]">Total Cost</span>
+                                <span className="font-bold text-xl text-[#059669]">Free</span>
                             </div>
                         </div>
                         <button onClick={() => navigate('/consumer/checkout')} className="btn-primary w-full justify-center mt-5 py-3">
-                            Proceed to Checkout
+                            Confirm Pickup Details
                         </button>
                     </div>
 
@@ -113,7 +111,6 @@ export default function CartPage() {
                         <div className="space-y-2 text-sm">
                             <div className="flex justify-between"><span className="text-white/80">Food Rescued</span><span className="font-bold">~{foodSaved}kg</span></div>
                             <div className="flex justify-between"><span className="text-white/80">CO₂ Prevented</span><span className="font-bold">~{co2Saved}kg</span></div>
-                            <div className="flex justify-between"><span className="text-white/80">Money Saved</span><span className="font-bold">₹{totalSavings}</span></div>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FiArrowRight } from 'react-icons/fi';
+import { Target, Eye } from 'lucide-react';
 
 const teamMembers = [
     { name: 'Priya Raghavan', role: 'CEO & Co-Founder', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80', bio: 'Ex-McKinsey. Passionate about sustainable food systems.' },
@@ -55,7 +56,9 @@ export default function AboutPage() {
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12">
                     <div className="card p-10">
-                        <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mb-5 text-2xl">🎯</div>
+                        <div className="w-14 h-14 rounded-2xl bg-[#ECFDF5] flex items-center justify-center mb-5">
+                            <Target className="w-7 h-7 text-[#059669]" />
+                        </div>
                         <h2 className="text-2xl font-bold text-[#064E3B] mb-4">Our Mission</h2>
                         <p className="text-[#065F46] leading-relaxed">
                             To eliminate avoidable food waste in India by building the most trusted and efficient marketplace
@@ -64,7 +67,9 @@ export default function AboutPage() {
                         </p>
                     </div>
                     <div className="card p-10">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0891B2] to-[#06b6d4] flex items-center justify-center mb-5 text-2xl">👁️</div>
+                        <div className="w-14 h-14 rounded-2xl bg-[#ECFDF5] flex items-center justify-center mb-5">
+                            <Eye className="w-7 h-7 text-[#059669]" />
+                        </div>
                         <h2 className="text-2xl font-bold text-[#064E3B] mb-4">Our Vision</h2>
                         <p className="text-[#065F46] leading-relaxed">
                             A world where no good food is wasted. We envision FoodSave becoming the infrastructure layer for

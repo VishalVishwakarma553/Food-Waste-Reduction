@@ -69,7 +69,6 @@ export default function FoodDetailPage() {
                     <div className="relative rounded-3xl overflow-hidden mb-3 bg-[#F0FDF4]" style={{ height: 380 }}>
                         <img src={food.images[activeImg]} alt={food.name} className="w-full h-full object-cover" />
                         <CountdownTimer expiresAt={food.expiresAt} />
-                        <span className="absolute top-4 left-4 food-card-discount text-sm px-3 py-1">{food.discount}% OFF</span>
                     </div>
                     <div className="flex gap-3">
                         {food.images.map((img, i) => (
@@ -118,12 +117,10 @@ export default function FoodDetailPage() {
                         </div>
                     </div>
 
-                    {/* Price */}
+                    {/* Free Tag */}
                     <div className="bg-[#F0FDF4] rounded-2xl p-4">
                         <div className="flex items-end gap-3 mb-1">
-                            <span className="text-4xl font-bold text-[#059669]">₹{food.discountedPrice}</span>
-                            <span className="text-xl text-[#065F46] line-through mb-1">₹{food.originalPrice}</span>
-                            <span className="badge badge-green text-sm mb-1">Save ₹{food.originalPrice - food.discountedPrice}</span>
+                            <span className="text-2xl font-bold text-[#059669]">100% Free</span>
                         </div>
                         <p className="text-xs text-[#065F46]">Per unit • {food.quantity} units available</p>
                     </div>
@@ -163,10 +160,10 @@ export default function FoodDetailPage() {
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm transition-all cursor-pointer ${added || isInCart ? 'bg-[#D1FAE5] text-[#059669] border border-[#059669]' : 'btn-primary'
                                 }`}>
                             <FiShoppingCart className="w-5 h-5" />
-                            {added ? 'Added to Cart!' : isInCart ? 'In Cart – Add More' : 'Add to Cart'}
+                            {added ? 'Added to Order!' : isInCart ? 'In Order – Add More' : 'Add to Order'}
                         </button>
                         <button onClick={handleBuyNow} className="flex-1 btn-cta justify-center py-3 text-sm">
-                            Buy Now
+                            Order Now
                         </button>
                     </div>
                 </div>

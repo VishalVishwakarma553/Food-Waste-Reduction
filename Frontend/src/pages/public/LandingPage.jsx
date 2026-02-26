@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiStar, FiCheckCircle, FiMapPin, FiFeather } from 'react-icons/fi';
+import { Leaf, Utensils, Store, Users, ShoppingBag, Globe, HandHeart } from 'lucide-react';
 
 import FoodCard from '../../components/shared/FoodCard';
 import { mockFoodItems, mockTestimonials } from '../../data/mockData';
@@ -34,39 +35,40 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
 }
 
 const impactStats = [
-    { label: 'Tonnes of Food Saved', target: 2430, suffix: 'T', icon: '🌿', color: 'from-[#059669] to-[#10B981]' },
-    { label: 'Meals Provided', target: 1200000, suffix: '+', icon: '🍽️', color: 'from-[#0891B2] to-[#06b6d4]' },
-    { label: 'Active Restaurants', target: 4200, suffix: '+', icon: '🏪', color: 'from-[#F59E0B] to-[#fbbf24]' },
-    { label: 'Happy Consumers', target: 52000, suffix: '+', icon: '😊', color: 'from-[#8B5CF6] to-[#a78bfa]' },
+    { label: 'Tonnes of Food Rescued', target: 2430, suffix: 'T', icon: Leaf },
+    { label: 'Free Meals Shared', target: 1200000, suffix: '+', icon: Utensils },
+    { label: 'Donor Restaurants', target: 4200, suffix: '+', icon: Store },
+    { label: 'Community Members', target: 52000, suffix: '+', icon: Users },
 ];
 
 const howItWorks = [
     {
         step: '01',
-        title: 'Browse Listings',
-        desc: 'Discover surplus food from nearby restaurants, stores, and home kitchens at up to 70% off.',
-        icon: '🔍',
-        color: 'from-[#059669] to-[#10B981]',
+        title: 'Restaurants List Surplus',
+        desc: 'Restaurants, stores, or home donors post their end-of-day leftover food — completely free for the community to claim.',
+        icon: Store,
     },
     {
         step: '02',
-        title: 'Place Your Order',
-        desc: 'Select your items, choose a pickup time slot, and place your order in seconds.',
-        icon: '🛒',
-        color: 'from-[#0891B2] to-[#06b6d4]',
+        title: 'Reserve Your Food',
+        desc: 'Browse nearby listings, choose what you need, and reserve it in seconds. No payment needed — it is always free.',
+        icon: ShoppingBag,
     },
     {
         step: '03',
-        title: 'Pick Up & Impact',
-        desc: 'Collect your food, enjoy great meals, and track your contribution to reducing food waste.',
-        icon: '🌍',
-        color: 'from-[#F59E0B] to-[#fbbf24]',
+        title: 'Pick Up from the Donor',
+        desc: 'Go to the restaurant or donor address at the pickup time to collect your food. Zero waste, zero cost — real community impact.',
+        icon: Globe,
     },
 ];
 
-const partners = [
-    'Zomato Foundation', 'Feeding India', 'Akshaya Patra', 'Robin Hood Army',
-    'Food Bank India', 'FSSAI', 'UN WFP', 'Swiggy Cares',
+const partnerLogos = [
+    { name: 'Zomato', url: 'https://upload.wikimedia.org/wikipedia/commons/b/bd/Zomato_Logo.svg' },
+    { name: 'Swiggy', url: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Swiggy_logo.svg' },
+    { name: 'UN WFP', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/World_Food_Programme_Logo.svg' },
+    { name: 'BigBasket', url: 'https://upload.wikimedia.org/wikipedia/commons/2/25/BigBasket_Logo.svg' },
+    { name: 'Zepto', url: 'https://upload.wikimedia.org/wikipedia/commons/3/30/Zepto_Logo.svg' },
+    { name: 'FSSAI', url: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Fssai_logo.svg' },
 ];
 
 export default function LandingPage() {
@@ -85,18 +87,18 @@ export default function LandingPage() {
                     <div>
                         <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 animate-fade-in">
                             <FiFeather className="text-[#10B981] w-4 h-4" />
-                            <span className="text-white/90 text-sm font-medium">India's #1 Food Waste Reduction Platform</span>
+                            <span className="text-white/90 text-sm font-medium">India's Free Food Rescue Platform</span>
                         </div>
 
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 animate-fade-in-up">
-                            Save Food.<br />
-                            <span className="text-[#10B981]">Save Money.</span><br />
-                            <span className="gradient-text bg-gradient-to-r from-[#FCD34D] to-[#F59E0B]">Save Earth.</span>
+                            Rescue Food.<br />
+                            <span className="text-[#10B981]">Feed People.</span><br />
+                            <span style={{ background: 'linear-gradient(90deg,#FCD34D,#F59E0B)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Heal the Planet.</span>
                         </h1>
 
                         <p className="text-xl text-white/80 leading-relaxed mb-8 animate-fade-in-up delay-200">
-                            Connect with nearby restaurants and stores to rescue surplus food at <strong className="text-white">up to 70% off</strong>.
-                            Fight hunger. Reduce waste. Build community.
+                            Restaurants list their end-of-day surplus food here. You browse, reserve, and <strong className="text-white">pick it up for free</strong>.
+                            No payment. No waste. Just community.
                         </p>
 
                         {/* Search Bar */}
@@ -113,15 +115,15 @@ export default function LandingPage() {
                                 to="/browse"
                                 className="btn-primary text-sm px-6 shrink-0"
                             >
-                                Find Food <FiArrowRight className="w-4 h-4" />
+                                Find Free Food <FiArrowRight className="w-4 h-4" />
                             </Link>
                         </div>
 
                         {/* Trust badges */}
                         <div className="flex flex-wrap gap-4 animate-fade-in-up delay-400">
                             {[
+                                { icon: FiCheckCircle, text: 'Always 100% Free' },
                                 { icon: FiCheckCircle, text: 'FSSAI Certified Partners' },
-                                { icon: FiCheckCircle, text: 'Secure Payments' },
                                 { icon: FiCheckCircle, text: 'Real-time Listings' },
                             ].map(({ icon: Icon, text }) => (
                                 <div key={text} className="flex items-center gap-2 text-white/80 text-sm">
@@ -134,33 +136,38 @@ export default function LandingPage() {
 
                     {/* Right – Floating Cards */}
                     <div className="hidden lg:block relative h-[540px]">
-                        {/* Main food image */}
-                        <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl animate-float">
+                        {/* Main community image */}
+                        <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl ">
                             <img
-                                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&q=80"
-                                alt="Delicious food"
+                                src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=700&q=80"
+                                alt="Community food rescue volunteers"
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-[#064E3B]/60 to-transparent" />
                         </div>
 
                         {/* Floating stat cards */}
-                        <div className="absolute -left-8 top-12 glass rounded-2xl p-4 shadow-xl animate-slide-left delay-500">
-                            <p className="text-2xl font-bold text-[#059669]">70% OFF</p>
-                            <p className="text-xs text-[#065F46]">Average savings per order</p>
-                        </div>
+                        {/* <div className="absolute -left-8 top-12 glass rounded-2xl p-4 shadow-xl animate-slide-left delay-500">
+                            <p className="text-2xl font-bold text-[#059669]">Always FREE</p>
+                            <p className="text-xs text-[#065F46]">No payment ever required</p>
+                        </div> */}
 
-                        <div className="absolute -right-8 top-1/3 glass rounded-2xl p-4 shadow-xl animate-slide-right delay-600">
+                        {/* <div className="absolute -right-8 top-1/3 glass rounded-2xl p-4 shadow-xl animate-slide-right delay-600">
                             <div className="flex items-center gap-2 mb-1">
                                 <FiStar className="text-amber-500 w-4 h-4 fill-amber-500" />
                                 <span className="font-bold text-[#064E3B]">4.8/5</span>
                             </div>
-                            <p className="text-xs text-[#065F46]">From 52,000+ reviews</p>
-                        </div>
+                            <p className="text-xs text-[#065F46]">From 52,000+ community members</p>
+                        </div> */}
 
                         <div className="absolute -left-4 bottom-16 glass rounded-2xl p-4 shadow-xl animate-slide-left delay-700">
-                            <p className="text-lg font-bold text-[#059669]">🌍 12 Lakh Meals</p>
-                            <p className="text-xs text-[#065F46]">Provided to communities</p>
+                            {/* <p className="text-lg font-bold text-[#059669]">🌍 12 Lakh Meals</p>
+                            <p className="text-xs text-[#065F46]">Rescued from waste</p> */}
+                            <div className="flex items-center gap-2 mb-1">
+                                <FiStar className="text-amber-500 w-4 h-4 fill-amber-500" />
+                                <span className="font-bold text-[#064E3B]">4.8/5</span>
+                            </div>
+                            <p className="text-xs text-[#065F46]">From 52,000+ community members</p>
                         </div>
                     </div>
                 </div>
@@ -183,10 +190,10 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        {impactStats.map(({ label, target, suffix, icon, color }) => (
+                        {impactStats.map(({ label, target, suffix, icon: Icon }) => (
                             <div key={label} className="card p-6 text-center group">
-                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                                    {icon}
+                                <div className="w-16 h-16 rounded-2xl bg-[#ECFDF5] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <Icon className="w-8 h-8 text-[#059669]" />
                                 </div>
                                 <AnimatedCounter target={target} suffix={suffix} />
                                 <p className="text-sm text-[#065F46] mt-2">{label}</p>
@@ -200,11 +207,11 @@ export default function LandingPage() {
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-14">
-                        <span className="badge badge-green mb-3">Simple & Fast</span>
+                        <span className="badge badge-green mb-3">Simple & Free</span>
                         <h2 className="text-4xl font-bold text-[#064E3B] mb-3">How FoodSave Works</h2>
                         <div className="section-divider" />
                         <p className="mt-6 text-[#065F46] max-w-xl mx-auto">
-                            From browsing to pickup in minutes — rescue great food and make a real impact with every order.
+                            Restaurants donate their surplus food. You reserve it, go to their address, and pick it up — completely free of charge.
                         </p>
                     </div>
 
@@ -212,11 +219,11 @@ export default function LandingPage() {
                         {/* Connector line */}
                         <div className="hidden md:block absolute top-20 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-[#059669] to-[#0891B2]" />
 
-                        {howItWorks.map(({ step, title, desc, icon, color }, i) => (
+                        {howItWorks.map(({ step, title, desc, icon: Icon }, i) => (
                             <div key={step} className={`card p-8 text-center animate-fade-in-up delay-${(i + 1) * 200}`}>
                                 <div className="relative inline-block mb-6">
-                                    <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br ${color} flex items-center justify-center text-3xl shadow-lg`}>
-                                        {icon}
+                                    <div className="w-20 h-20 rounded-3xl bg-[#ECFDF5] flex items-center justify-center shadow-sm">
+                                        <Icon className="w-10 h-10 text-[#059669]" />
                                     </div>
                                     <span className="absolute -top-2 -right-2 w-7 h-7 bg-[#064E3B] text-white text-xs font-bold rounded-full flex items-center justify-center">
                                         {step}
@@ -291,15 +298,20 @@ export default function LandingPage() {
             </section>
 
             {/* ========== PARTNERS ========== */}
-            <section className="py-16 bg-[#F0FDF4] border-y border-[#D1FAE5]">
+            <section className="py-16 bg-[#F0FDF4] border-y border-[#D1FAE5] overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4">
                     <p className="text-center text-[#065F46] font-semibold text-sm mb-8 uppercase tracking-widest">Trusted Partners</p>
-                    <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
-                        {partners.map((name) => (
-                            <div key={name} className="text-[#065F46] font-semibold text-sm md:text-base opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
-                                {name}
-                            </div>
-                        ))}
+                    {/* Marquee Container with fade edges */}
+                    <div className="relative w-full overflow-hidden flex items-center before:content-[''] before:absolute before:left-0 before:top-0 before:w-20 before:h-full before:bg-gradient-to-r before:from-[#F0FDF4] before:to-transparent before:z-10 after:content-[''] after:absolute after:right-0 after:top-0 after:w-20 after:h-full after:bg-gradient-to-l after:from-[#F0FDF4] after:to-transparent after:z-10">
+                        {/* Marquee Content */}
+                        <div className="animate-marquee flex gap-12 md:gap-20 w-max pause-on-hover px-4">
+                            {/* Duplicate array for seamless infinite scroll */}
+                            {[...partnerLogos, ...partnerLogos].map((partner, idx) => (
+                                <div key={idx} className="flex-shrink-0 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100 cursor-pointer h-12">
+                                    <img src={partner.url} alt={partner.name} className="h-full max-w-[120px] md:max-w-[140px] object-contain" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -313,24 +325,24 @@ export default function LandingPage() {
                         <div className="space-y-6">
                             {[
                                 {
-                                    icon: '🛒',
+                                    icon: ShoppingBag,
                                     title: 'For Consumers',
-                                    desc: 'Save up to 70% on quality food from top restaurants. Reduce your carbon footprint with every order.',
+                                    desc: 'Browse surplus food from nearby restaurants, reserve what you need, and pick it up — always 100% free. No payment, ever.',
                                 },
                                 {
-                                    icon: '🏪',
+                                    icon: Store,
                                     title: 'For Restaurants & Stores',
-                                    desc: 'Recover revenue from surplus food, reduce waste costs, and build a sustainability brand.',
+                                    desc: 'List your end-of-day leftover food in minutes. Reduce waste, help your community, and earn a sustainability reputation.',
                                 },
                                 {
-                                    icon: '🤝',
-                                    title: 'For NGOs',
-                                    desc: 'Access free or subsidized food donations at scale. Feed more people, build more impact.',
+                                    icon: HandHeart,
+                                    title: 'For NGOs & Communities',
+                                    desc: 'Access free food donations at scale directly from restaurants. Feed more beneficiaries with zero cost.',
                                 },
-                            ].map(({ icon, title, desc }) => (
+                            ].map(({ icon: Icon, title, desc }) => (
                                 <div key={title} className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-[#D1FAE5] flex items-center justify-center text-xl shrink-0">
-                                        {icon}
+                                    <div className="w-12 h-12 rounded-2xl bg-[#D1FAE5] flex items-center justify-center shrink-0">
+                                        <Icon className="w-6 h-6 text-[#059669]" />
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-[#064E3B] mb-1">{title}</h3>
@@ -348,14 +360,14 @@ export default function LandingPage() {
                     <div className="relative">
                         <div className="rounded-3xl overflow-hidden shadow-2xl">
                             <img
-                                src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=700&q=80"
+                                src="/community-sharing.png"
                                 alt="Community sharing food"
                                 className="w-full h-96 object-cover"
                             />
                         </div>
                         {/* Floating badge */}
-                        <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-5 shadow-xl">
-                            <p className="text-3xl font-bold text-[#059669]">2.4MT</p>
+                        <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-4 shadow-xl">
+                            <p className="text-2xl font-bold text-[#059669]">2.4MT</p>
                             <p className="text-sm text-[#065F46]">Food rescued this year 🌿</p>
                         </div>
                     </div>
@@ -363,21 +375,21 @@ export default function LandingPage() {
             </section>
 
             {/* ========== BOTTOM CTA ========== */}
-            <section className="py-24 gradient-hero relative overflow-hidden">
+            <section className="py-16 gradient-hero relative overflow-hidden">
                 <div className="hero-blob w-80 h-80 bg-[#10B981] top-0 right-10" />
                 <div className="hero-blob w-60 h-60 bg-[#0891B2] bottom-0 left-20" />
                 <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
                     <FiFeather className="w-16 h-16 text-[#10B981] mx-auto mb-6 animate-float" />
-                    <h2 className="text-5xl font-bold text-white mb-6">Ready to Make a Difference?</h2>
-                    <p className="text-xl text-white/80 mb-10">
-                        Join 50,000+ Indians who are already saving food, saving money, and creating a more sustainable future.
+                    <h2 className="text-4xl font-bold text-white mb-4">Good Food Shouldn't Go to Waste</h2>
+                    <p className="text-lg text-white/80 mb-10">
+                        Join 52,000+ community members and 4,200+ restaurants already rescuing food together — completely free, every single day.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link to="/register" className="bg-white text-[#059669] font-bold text-lg px-10 py-4 rounded-full hover:bg-opacity-90 transition-all duration-200 shadow-lg cursor-pointer">
-                            Get Started – It's Free
+                        <Link to="/register" className="bg-white text-[#059669] font-semibold text-base px-8 py-2.5 rounded-full hover:bg-opacity-90 transition-all duration-200 shadow-lg cursor-pointer">
+                            Join Free — Rescue Food Today
                         </Link>
-                        <Link to="/browse" className="border-2 border-white text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-200 cursor-pointer">
-                            Browse Food Now
+                        <Link to="/browse" className="border-2 border-white text-white font-semibold text-base px-8 py-2.5 rounded-full hover:bg-white/10 transition-all duration-200 cursor-pointer">
+                            See Available Food
                         </Link>
                     </div>
                 </div>

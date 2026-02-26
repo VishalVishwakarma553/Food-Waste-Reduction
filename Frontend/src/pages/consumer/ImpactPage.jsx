@@ -6,8 +6,20 @@ import {
     CartesianGrid, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { FiShare2, FiAward } from 'react-icons/fi';
+import { Leaf, DollarSign, Recycle, Utensils, Sprout, Star, Sunrise, Trophy, Crown, Award } from 'lucide-react';
 
 const COLORS = ['#059669', '#0891B2', '#F59E0B', '#8B5CF6', '#EF4444'];
+
+const BadgeIconMap = {
+    '🌱': Sprout,
+    '⭐': Star,
+    '🌿': Leaf,
+    '🌅': Sunrise,
+    '🏆': Trophy,
+    '♻️': Recycle,
+    '🍽️': Utensils,
+    '👑': Crown
+};
 
 const categoryData = [
     { name: 'Bakery', value: 35 },
@@ -41,16 +53,16 @@ export default function ImpactPage() {
             <h1 className="text-2xl font-bold text-[#064E3B]">My Impact Dashboard</h1>
 
             {/* Hero Impact */}
-            <div className="card bg-gradient-to-br from-[#059669] to-[#0891B2] p-8 text-white">
+            <div className="rounded-[1.5rem] border border-[#D1FAE5] shadow-lg bg-gradient-to-br from-[#059669] to-[#0891B2] p-8 text-white">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {[
-                        { value: `${user?.impact?.foodSaved}kg`, label: 'Food Saved', icon: '🌿' },
-                        { value: `₹${user?.impact?.moneySaved?.toLocaleString()}`, label: 'Money Saved', icon: '💰' },
-                        { value: `${user?.impact?.co2Reduced}kg`, label: 'CO₂ Reduced', icon: '♻️' },
-                        { value: user?.impact?.mealsProvided, label: 'Meals Provided', icon: '🍽️' },
-                    ].map(({ value, label, icon }) => (
+                        { value: `${user?.impact?.foodSaved}kg`, label: 'Food Saved', icon: Leaf },
+                        { value: `₹${user?.impact?.moneySaved?.toLocaleString()}`, label: 'Money Saved', icon: DollarSign },
+                        { value: `${user?.impact?.co2Reduced}kg`, label: 'CO₂ Reduced', icon: Recycle },
+                        { value: user?.impact?.mealsProvided, label: 'Meals Provided', icon: Utensils },
+                    ].map(({ value, label, icon: Icon }) => (
                         <div key={label} className="text-center">
-                            <div className="text-3xl mb-2">{icon}</div>
+                            <div className="flex justify-center mb-3 text-white"><Icon className="w-8 h-8" strokeWidth={1.5} /></div>
                             <p className="text-3xl font-bold">{value}</p>
                             <p className="text-white/80 text-sm mt-1">{label}</p>
                         </div>
@@ -145,35 +157,41 @@ export default function ImpactPage() {
                 <div className="mb-4">
                     <p className="text-sm font-semibold text-[#065F46] mb-3">Earned ({earnedBadges.length})</p>
                     <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
-                        {earnedBadges.map(badge => (
-                            <div key={badge.id} className="card p-3 text-center group relative cursor-pointer">
-                                <div className="text-3xl mb-1">{badge.icon}</div>
-                                <p className="text-xs font-semibold text-[#064E3B] leading-tight">{badge.name}</p>
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 bg-[#064E3B] text-white text-xs rounded-xl p-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none text-center">
-                                    {badge.description}
-                                    <div className="text-[#D1FAE5] text-xs mt-1">{badge.earnedDate}</div>
+                        {earnedBadges.map(badge => {
+                            const BadgeIcon = BadgeIconMap[badge.icon] || Award;
+                            return (
+                                <div key={badge.id} className="card p-3 text-center group relative cursor-pointer hover:bg-[#F0FDF4] transition-colors">
+                                    <div className="flex justify-center mb-2 mt-1 text-[#059669]"><BadgeIcon className="w-8 h-8" strokeWidth={1.5} /></div>
+                                    <p className="text-xs font-semibold text-[#064E3B] leading-tight">{badge.name}</p>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-32 bg-[#064E3B] text-white text-xs rounded-xl p-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none text-center">
+                                        {badge.description}
+                                        <div className="text-[#D1FAE5] text-xs mt-1">{badge.earnedDate}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
                 <div>
                     <p className="text-sm font-semibold text-[#065F46] mb-3">In Progress ({unearned.length})</p>
                     <div className="space-y-3">
-                        {unearned.map(badge => (
-                            <div key={badge.id} className="card-flat p-4 flex items-center gap-4 opacity-70">
-                                <div className="text-3xl grayscale">{badge.icon}</div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold text-[#064E3B]">{badge.name}</p>
-                                    <p className="text-xs text-[#065F46] mb-2">{badge.description}</p>
-                                    <div className="progress-bar">
-                                        <div className="progress-fill" style={{ width: `${Math.min(100, (badge.progress / badge.target) * 100)}%` }} />
+                        {unearned.map(badge => {
+                            const BadgeIcon = BadgeIconMap[badge.icon] || Award;
+                            return (
+                                <div key={badge.id} className="card-flat p-4 flex items-center gap-4 opacity-70 hover:opacity-100 transition-opacity">
+                                    <div className="text-[#065F46] opacity-50"><BadgeIcon className="w-8 h-8" strokeWidth={1.5} /></div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-[#064E3B]">{badge.name}</p>
+                                        <p className="text-xs text-[#065F46] mb-2">{badge.description}</p>
+                                        <div className="progress-bar">
+                                            <div className="progress-fill" style={{ width: `${Math.min(100, (badge.progress / badge.target) * 100)}%` }} />
+                                        </div>
+                                        <p className="text-xs text-[#065F46] mt-1">{badge.progress} / {badge.target}</p>
                                     </div>
-                                    <p className="text-xs text-[#065F46] mt-1">{badge.progress} / {badge.target}</p>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>

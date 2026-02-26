@@ -3,6 +3,18 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { mockFoodItems, mockOrders, mockImpactChartData } from '../../data/mockData';
 import { FiArrowRight, FiShoppingBag, FiBarChart2, FiHeart, FiTrendingUp, FiFeather } from 'react-icons/fi';
+import { Search, Package, Globe, Heart, Sprout, Star, Leaf, Sunrise, Trophy, Recycle, Utensils, Crown, Award } from 'lucide-react';
+
+const BadgeIconMap = {
+    '🌱': Sprout,
+    '⭐': Star,
+    '🌿': Leaf,
+    '🌅': Sunrise,
+    '🏆': Trophy,
+    '♻️': Recycle,
+    '🍽️': Utensils,
+    '👑': Crown
+};
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import FoodCard from '../../components/shared/FoodCard';
@@ -52,7 +64,7 @@ export default function DashboardPage() {
     return (
         <div className="space-y-8">
             {/* Welcome */}
-            <div className="card p-6 bg-gradient-to-r from-[#059669] to-[#0891B2] text-white overflow-hidden relative">
+            <div className="rounded-[1.5rem] border border-[#D1FAE5] p-6 bg-gradient-to-r from-[#059669] to-[#0891B2] text-white overflow-hidden relative shadow-lg">
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
                 <div className="absolute -bottom-10 -right-20 w-60 h-60 bg-white/5 rounded-full" />
                 <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
@@ -133,14 +145,17 @@ export default function DashboardPage() {
                             </Link>
                         </div>
                         <div className="grid grid-cols-4 gap-2">
-                            {earnedBadges.map(badge => (
-                                <div key={badge.id} className="bg-[#F0FDF4] rounded-2xl p-2 text-center group cursor-pointer relative">
-                                    <div className="text-2xl">{badge.icon}</div>
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-28 bg-[#064E3B] text-white text-xs rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center pointer-events-none">
-                                        {badge.name}
+                            {earnedBadges.map(badge => {
+                                const BadgeIcon = BadgeIconMap[badge.icon] || Award;
+                                return (
+                                    <div key={badge.id} className="bg-[#F0FDF4] rounded-2xl p-2 text-center group cursor-pointer relative hover:bg-[#D1FAE5] transition-colors">
+                                        <div className="flex justify-center text-[#059669] my-1"><BadgeIcon className="w-6 h-6" strokeWidth={1.5} /></div>
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-28 bg-[#064E3B] text-white text-xs rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center pointer-events-none shadow-lg">
+                                            {badge.name}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -173,13 +188,13 @@ export default function DashboardPage() {
                 <h2 className="text-xl font-bold text-[#064E3B] mb-4">Quick Actions</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                        { to: '/consumer/listings', icon: '🔍', label: 'Browse Food' },
-                        { to: '/consumer/orders', icon: '📦', label: 'My Orders' },
-                        { to: '/consumer/impact', icon: '🌍', label: 'My Impact' },
-                        { to: '/consumer/favorites', icon: '❤️', label: 'Favorites' },
-                    ].map(({ to, icon, label }) => (
-                        <Link key={to} to={to} className="card p-5 flex flex-col items-center gap-2 text-center cursor-pointer">
-                            <span className="text-3xl">{icon}</span>
+                        { to: '/consumer/listings', icon: Search, label: 'Browse Food' },
+                        { to: '/consumer/orders', icon: Package, label: 'My Orders' },
+                        { to: '/consumer/impact', icon: Globe, label: 'My Impact' },
+                        { to: '/consumer/favorites', icon: Heart, label: 'Favorites' },
+                    ].map(({ to, icon: Icon, label }) => (
+                        <Link key={to} to={to} className="card p-5 flex flex-col items-center gap-2 text-center cursor-pointer hover:bg-[#F0FDF4] group">
+                            <span className="text-[#059669] group-hover:scale-110 transition-transform"><Icon className="w-8 h-8" strokeWidth={1.5} /></span>
                             <span className="text-sm font-semibold text-[#064E3B]">{label}</span>
                         </Link>
                     ))}

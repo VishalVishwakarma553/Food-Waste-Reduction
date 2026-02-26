@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,400&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -21,12 +20,12 @@
     --color-surface-2: #F0FDF4;
     --color-border: #D1FAE5;
 
-    --font-family-heading: 'Playfair Display SC', serif;
-    --font-family-body: 'Karla', sans-serif;
+    --font-family-heading: 'Lora', serif;
+    --font-family-body: 'DM Sans', sans-serif;
 
-    --radius-xl: 1.5rem;
-    --radius-2xl: 2rem;
-    --radius-3xl: 2.5rem;
+    --radius-xl: 1.25rem;
+    --radius-2xl: 1.75rem;
+    --radius-3xl: 2.25rem;
 }
 
 *,
@@ -40,7 +39,7 @@ html {
 }
 
 body {
-    font-family: 'Karla', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     background-color: #ECFDF5;
     color: #064E3B;
     line-height: 1.6;
@@ -54,7 +53,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Playfair Display SC', serif;
+    font-family: 'Lora', serif;
     line-height: 1.2;
 }
 
@@ -323,6 +322,23 @@ h6 {
     box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35);
 }
 
+.search-btn-primary {
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    border-radius: 9999px;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35);
+}
+
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45);
@@ -508,7 +524,7 @@ h6 {
 
 /* ===================== IMPACT COUNTER ===================== */
 .impact-counter {
-    font-size: 3.5rem;
+    font-size: 2.15rem;
     font-weight: 800;
     font-family: 'Playfair Display SC', serif;
     line-height: 1;
@@ -597,6 +613,25 @@ h6 {
     bottom: -8px;
     width: 2px;
     background: #D1FAE5;
+}
+
+/* ===================== MARQUEE ANIMATION ===================== */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 30s linear infinite;
+}
+
+.pause-on-hover:hover {
+    animation-play-state: paused;
 }
 
 .timeline-step.completed::before {

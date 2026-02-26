@@ -64,7 +64,7 @@ export default function BrowsePage() {
                 <div className="relative z-10 max-w-3xl mx-auto px-4">
                     <h1 className="text-4xl font-bold text-white mb-3">Browse Available Food</h1>
                     <p className="text-white/80 mb-6">Discover fresh, quality surplus food near you at incredible prices.</p>
-                    <div className="bg-white rounded-2xl p-2 flex gap-2 shadow-lg max-w-xl mx-auto">
+                    <div className="bg-white rounded-2xl p-1 flex gap-2 shadow-lg max-w-xl mx-auto">
                         <div className="flex items-center gap-2 flex-1 px-3">
                             <FiSearch className="text-[#059669] w-5 h-5 shrink-0" />
                             <input
@@ -72,7 +72,7 @@ export default function BrowsePage() {
                                 onChange={e => setSearch(e.target.value)}
                                 type="text"
                                 placeholder="Search food, restaurant..."
-                                className="flex-1 outline-none text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent py-2"
+                                className="flex-1 outline-none text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent "
                             />
                             {search && (
                                 <button onClick={() => setSearch('')} className="cursor-pointer">
@@ -80,7 +80,7 @@ export default function BrowsePage() {
                                 </button>
                             )}
                         </div>
-                        <button className="btn-primary text-sm shrink-0 py-2 px-5">Search</button>
+                        <button className="search-btn-primary text-sm shrink-0 py-1 px-2">Search</button>
                     </div>
                 </div>
             </div>
@@ -120,8 +120,8 @@ export default function BrowsePage() {
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all cursor-pointer ${selectedCategory === cat
-                                            ? 'bg-[#D1FAE5] text-[#059669] font-semibold'
-                                            : 'text-[#065F46] hover:bg-[#F0FDF4]'
+                                        ? 'bg-[#D1FAE5] text-[#059669] font-semibold'
+                                        : 'text-[#065F46] hover:bg-[#F0FDF4]'
                                         }`}
                                 >
                                     {cat}
@@ -234,8 +234,8 @@ export default function BrowsePage() {
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
                                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer ${selectedCategory === cat
-                                        ? 'bg-[#059669] text-white shadow-md'
-                                        : 'bg-white text-[#064E3B] border border-[#D1FAE5] hover:border-[#059669]'
+                                    ? 'bg-[#059669] text-white shadow-md'
+                                    : 'bg-white text-[#064E3B] border border-[#D1FAE5] hover:border-[#059669]'
                                     }`}
                             >
                                 {cat}
