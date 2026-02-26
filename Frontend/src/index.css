@@ -1,0 +1,720 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,400&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #059669;
+    --color-primary-light: #10B981;
+    --color-primary-dark: #047857;
+    --color-secondary: #10B981;
+    --color-cta: #0891B2;
+    --color-cta-dark: #0e7490;
+    --color-bg: #ECFDF5;
+    --color-bg-dark: #064E3B;
+    --color-text: #064E3B;
+    --color-text-muted: #065F46;
+    --color-amber: #F59E0B;
+    --color-amber-light: #FCD34D;
+    --color-red: #EF4444;
+    --color-orange: #F97316;
+    --color-surface: #ffffff;
+    --color-surface-2: #F0FDF4;
+    --color-border: #D1FAE5;
+
+    --font-family-heading: 'Playfair Display SC', serif;
+    --font-family-body: 'Karla', sans-serif;
+
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    --radius-3xl: 2.5rem;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Karla', sans-serif;
+    background-color: #ECFDF5;
+    color: #064E3B;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Playfair Display SC', serif;
+    line-height: 1.2;
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F0FDF4;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #10B981;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #059669;
+}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse-green {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease both;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease both;
+}
+
+.animate-slide-left {
+    animation: slideInLeft 0.6s ease both;
+}
+
+.animate-slide-right {
+    animation: slideInRight 0.6s ease both;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-green {
+    animation: pulse-green 2s infinite;
+}
+
+.animate-count-up {
+    animation: countUp 0.5s ease both;
+}
+
+.animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+}
+
+.delay-100 {
+    animation-delay: 0.1s;
+}
+
+.delay-200 {
+    animation-delay: 0.2s;
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
+}
+
+.delay-400 {
+    animation-delay: 0.4s;
+}
+
+.delay-500 {
+    animation-delay: 0.5s;
+}
+
+.delay-600 {
+    animation-delay: 0.6s;
+}
+
+.delay-700 {
+    animation-delay: 0.7s;
+}
+
+.delay-800 {
+    animation-delay: 0.8s;
+}
+
+/* ===================== GLASS ===================== */
+.glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(209, 250, 229, 0.6);
+}
+
+.glass-dark {
+    background: rgba(6, 78, 59, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ===================== ORGANIC SHAPES ===================== */
+.organic-clip-1 {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.organic-clip-2 {
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+}
+
+/* ===================== GRADIENTS ===================== */
+.gradient-primary {
+    background: linear-gradient(135deg, #059669 0%, #10B981 50%, #0891B2 100%);
+}
+
+.gradient-hero {
+    background: linear-gradient(135deg, #064E3B 0%, #059669 40%, #0891B2 100%);
+}
+
+.gradient-card {
+    background: linear-gradient(145deg, #ffffff 0%, #F0FDF4 100%);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #059669, #0891B2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-amber {
+    background: linear-gradient(135deg, #F59E0B, #EF4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===================== CARD STYLES ===================== */
+.card {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    border: 1px solid #D1FAE5;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 20px 60px rgba(5, 150, 105, 0.15);
+    transform: translateY(-4px);
+    border-color: #10B981;
+}
+
+.card-flat {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    border: 1px solid #D1FAE5;
+}
+
+/* ===================== BUTTON STYLES ===================== */
+.btn-primary {
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.45);
+    background: linear-gradient(135deg, #047857, #059669);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #059669;
+    border: 2px solid #059669;
+    border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: #059669;
+    color: white;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn-cta {
+    background: linear-gradient(135deg, #0891B2, #0e7490);
+    color: white;
+    border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.35);
+}
+
+.btn-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(8, 145, 178, 0.45);
+}
+
+/* ===================== FORM INPUTS ===================== */
+.input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #D1FAE5;
+    border-radius: 0.75rem;
+    font-family: 'Karla', sans-serif;
+    font-size: 0.95rem;
+    color: #064E3B;
+    background: white;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.input-field:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.input-field::placeholder {
+    color: #6EE7B7;
+}
+
+.input-field.error {
+    border-color: #EF4444;
+}
+
+/* ===================== BADGE STYLES ===================== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'Karla', sans-serif;
+}
+
+.badge-green {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.badge-amber {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.badge-red {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.badge-blue {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.badge-purple {
+    background: #EDE9FE;
+    color: #5B21B6;
+}
+
+/* ===================== STATUS COLORS ===================== */
+.status-pending {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.status-confirmed {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.status-ready {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.status-completed {
+    background: #D1FAE5;
+    color: #047857;
+}
+
+.status-cancelled {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* ===================== COUNTDOWN TIMER ===================== */
+.countdown-green {
+    color: #059669;
+}
+
+.countdown-yellow {
+    color: #F59E0B;
+}
+
+.countdown-red {
+    color: #EF4444;
+    animation: pulse 1s infinite;
+}
+
+/* ===================== SIDEBAR ===================== */
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    color: #065F46;
+    font-family: 'Karla', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.sidebar-nav-item:hover {
+    background: #D1FAE5;
+    color: #059669;
+}
+
+.sidebar-nav-item.active {
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+/* ===================== IMPACT COUNTER ===================== */
+.impact-counter {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: 'Playfair Display SC', serif;
+    line-height: 1;
+}
+
+/* ===================== FOOD CARD ===================== */
+.food-card {
+    background: white;
+    border-radius: 1.5rem;
+    border: 1px solid #D1FAE5;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.food-card:hover {
+    box-shadow: 0 16px 48px rgba(5, 150, 105, 0.15);
+    transform: translateY(-4px);
+}
+
+.food-card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.food-card-discount {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.food-card-expiry {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 9999px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ===================== STAR RATING ===================== */
+.star-filled {
+    color: #F59E0B;
+}
+
+.star-empty {
+    color: #D1FAE5;
+}
+
+/* ===================== PROGRESS BAR ===================== */
+.progress-bar {
+    height: 8px;
+    background: #D1FAE5;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #059669, #10B981);
+    transition: width 1s ease;
+}
+
+/* ===================== TIMELINE ===================== */
+.timeline-step {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+}
+
+.timeline-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -8px;
+    width: 2px;
+    background: #D1FAE5;
+}
+
+.timeline-step.completed::before {
+    background: #059669;
+}
+
+.timeline-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid #D1FAE5;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #94A3B8;
+}
+
+.timeline-dot.completed {
+    background: linear-gradient(135deg, #059669, #10B981);
+    border-color: #059669;
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.timeline-dot.active {
+    border-color: #059669;
+    color: #059669;
+    animation: pulse-green 2s infinite;
+}
+
+/* ===================== TABS ===================== */
+.tab-btn {
+    padding: 0.625rem 1.5rem;
+    border-radius: 9999px;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    background: transparent;
+    color: #065F46;
+}
+
+.tab-btn:hover {
+    background: #D1FAE5;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+/* ===================== SECTION DIVIDER ===================== */
+.section-divider {
+    width: 64px;
+    height: 4px;
+    background: linear-gradient(90deg, #059669, #10B981);
+    border-radius: 9999px;
+    margin: 0.75rem auto 0;
+}
+
+/* ===================== HERO BACKGROUND SHAPES ===================== */
+.hero-blob {
+    position: absolute;
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    filter: blur(60px);
+    opacity: 0.3;
+}
+
+/* ===================== NOTIFICATION DOT ===================== */
+.notif-dot {
+    width: 8px;
+    height: 8px;
+    background: #EF4444;
+    border-radius: 50%;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    border: 2px solid white;
+}
+
+/* ===================== SWIPER OVERRIDES ===================== */
+.swiper-pagination-bullet {
+    background: #D1FAE5 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: #059669 !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #059669 !important;
+}
+
+/* ===================== RECHARTS OVERRIDES ===================== */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+    border-radius: 0.75rem !important;
+    border: 1px solid #D1FAE5 !important;
+    box-shadow: 0 4px 24px rgba(5, 150, 105, 0.1) !important;
+}
+
+/* ===================== CHECKBOX & RADIO ===================== */
+.custom-checkbox {
+    accent-color: #059669;
+}
+
+/* ===================== OVERLAY BLUR ===================== */
+.overlay-blur {
+    backdrop-filter: blur(4px);
+    background: rgba(6, 78, 59, 0.3);
+}
+
+/* ===================== RANGE SLIDER ===================== */
+input[type="range"] {
+    accent-color: #059669;
+}
