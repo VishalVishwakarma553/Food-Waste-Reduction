@@ -55,7 +55,11 @@ export default function RegisterPage() {
         setLoading(true);
         try {
             await register(data);
-            navigate('/consumer/dashboard');
+            if (data.role === 'restaurant') {
+                navigate('/restaurant/dashboard');
+            } else {
+                navigate('/consumer/dashboard');
+            }
         } finally {
             setLoading(false);
         }

@@ -333,7 +333,6 @@ export const mockOrders = [
     },
 ];
 
-// Mock User
 export const mockUser = {
     id: 'user-1',
     name: 'Arjun Krishnan',
@@ -376,6 +375,32 @@ export const mockUser = {
         priceDrops: false,
         promotions: false,
         weeklyReport: true,
+    }
+};
+
+export const mockRestaurantUser = {
+    id: 'rest-1',
+    name: 'Bakehouse Green',
+    email: 'hello@bakehousegreen.com',
+    phone: '+91 98765 22222',
+    avatar: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=200&h=200',
+    memberSince: '2023-05-10',
+    role: 'restaurant',
+    address: '12 Bakery Lane, Indiranagar, Bengaluru',
+    impact: {
+        totalOrders: 142,
+        foodSaved: 45,
+        co2Reduced: 18.5,
+        mealsProvided: 110,
+        sustainabilityScore: 'A+',
+    },
+    isVerified: true,
+    notifications: {
+        email: true,
+        push: true,
+        newOrders: true,
+        reviews: true,
+        systemAlerts: true,
     }
 };
 

@@ -32,6 +32,16 @@ import FavoritesPage from '../pages/consumer/FavoritesPage';
 import NotificationsPage from '../pages/consumer/NotificationsPage';
 import ProfilePage from '../pages/consumer/ProfilePage';
 
+// Restaurant Pages
+import RestaurantLayout from '../layouts/RestaurantLayout';
+import RestaurantDashboardPage from '../pages/restaurant/DashboardPage';
+import AddListingPage from '../pages/restaurant/AddListingPage';
+import MyListingsPage from '../pages/restaurant/MyListingsPage';
+import RestaurantOrdersPage from '../pages/restaurant/OrdersPage';
+import AnalyticsPage from '../pages/restaurant/AnalyticsPage';
+import RestaurantNotificationsPage from '../pages/restaurant/NotificationsPage';
+import SettingsPage from '../pages/restaurant/SettingsPage';
+
 function ProtectedRoute({ children }) {
     const { isAuthenticated, isLoading } = useAuth();
     if (isLoading) return (
@@ -80,6 +90,21 @@ export default function AppRouter() {
                 <Route path="/consumer/favorites" element={<FavoritesPage />} />
                 <Route path="/consumer/notifications" element={<NotificationsPage />} />
                 <Route path="/consumer/profile" element={<ProfilePage />} />
+            </Route>
+
+            {/* Protected Restaurant Routes */}
+            <Route element={
+                <ProtectedRoute>
+                    <RestaurantLayout />
+                </ProtectedRoute>
+            }>
+                <Route path="/restaurant/dashboard" element={<RestaurantDashboardPage />} />
+                <Route path="/restaurant/add-listing" element={<AddListingPage />} />
+                <Route path="/restaurant/listings" element={<MyListingsPage />} />
+                <Route path="/restaurant/orders" element={<RestaurantOrdersPage />} />
+                <Route path="/restaurant/analytics" element={<AnalyticsPage />} />
+                <Route path="/restaurant/notifications" element={<RestaurantNotificationsPage />} />
+                <Route path="/restaurant/settings" element={<SettingsPage />} />
             </Route>
 
             {/* Fallback */}

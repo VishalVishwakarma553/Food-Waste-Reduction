@@ -5,7 +5,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
 export default function CheckoutPage() {
-    const { cartItems, cartTotal, clearCart } = useCart();
+    const { cartItems, clearCart } = useCart();
     const { user } = useAuth();
     const navigate = useNavigate();
     const [notes, setNotes] = useState('');

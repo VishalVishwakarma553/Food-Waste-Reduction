@@ -4,7 +4,7 @@ import { FiMinus, FiPlus, FiTrash2, FiShoppingBag } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 
 export default function CartPage() {
-    const { cartItems, removeFromCart, updateQuantity, updatePickupSlot, cartTotal, clearCart } = useCart();
+    const { cartItems, removeFromCart, updateQuantity, updatePickupSlot, clearCart } = useCart();
     const navigate = useNavigate();
     const [removing, setRemoving] = useState(null);
 

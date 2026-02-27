@@ -17,8 +17,14 @@ export default function LoginPage() {
         if (!form.email || !form.password) { setError('Please fill in all fields.'); return; }
         setLoading(true);
         try {
-            await login(form.email, form.password);
-            navigate('/consumer/dashboard');
+            const loggedInUser = await login(form.email, form.password);
+
+            if (loggedInUser.role === 'restaurant') {
+                navigate('/restaurant/dashboard');
+            } else {
+                navigate('/consumer/dashboard');
+            }
+
         } catch {
             setError('Invalid email or password. Please try again.');
         } finally {

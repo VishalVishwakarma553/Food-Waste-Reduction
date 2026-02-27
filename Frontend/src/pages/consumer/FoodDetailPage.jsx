@@ -36,7 +36,7 @@ export default function FoodDetailPage() {
     const { addToCart, toggleFavorite, isFavorite, cartItems } = useCart();
     const food = mockFoodItems.find(f => f.id === id) || mockFoodItems[0];
     const reviews = mockReviews.filter(r => r.foodId === food.id);
-    const related = mockFoodItems.filter(f => f.id !== food.id && f.category === food.category).slice(0, 3);
+    // Filter out the current item if it was in the generic list
 
     const [activeImg, setActiveImg] = useState(0);
     const [qty, setQty] = useState(1);

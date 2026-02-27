@@ -60,13 +60,15 @@ export default function ImpactPage() {
                         { value: `₹${user?.impact?.moneySaved?.toLocaleString()}`, label: 'Money Saved', icon: DollarSign },
                         { value: `${user?.impact?.co2Reduced}kg`, label: 'CO₂ Reduced', icon: Recycle },
                         { value: user?.impact?.mealsProvided, label: 'Meals Provided', icon: Utensils },
-                    ].map(({ value, label, icon: Icon }) => (
-                        <div key={label} className="text-center">
-                            <div className="flex justify-center mb-3 text-white"><Icon className="w-8 h-8" strokeWidth={1.5} /></div>
-                            <p className="text-3xl font-bold">{value}</p>
-                            <p className="text-white/80 text-sm mt-1">{label}</p>
-                        </div>
-                    ))}
+                    ].map(
+                        // eslint-disable-next-line no-unused-vars
+                        ({ value, label, icon: Icon }) => (
+                            <div key={label} className="text-center">
+                                <div className="flex justify-center mb-3 text-white"><Icon className="w-8 h-8" strokeWidth={1.5} /></div>
+                                <p className="text-3xl font-bold">{value}</p>
+                                <p className="text-white/80 text-sm mt-1">{label}</p>
+                            </div>
+                        ))}
                 </div>
                 <div className="mt-6 pt-6 border-t border-white/20 flex items-center justify-between flex-wrap gap-3">
                     <p className="text-white/80 text-sm">Community Rank: <strong className="text-white text-lg">#{user?.leaderboardRank}</strong> of 52,000+</p>

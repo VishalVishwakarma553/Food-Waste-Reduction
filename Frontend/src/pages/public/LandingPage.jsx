@@ -125,12 +125,14 @@ export default function LandingPage() {
                                 { icon: FiCheckCircle, text: 'Always 100% Free' },
                                 { icon: FiCheckCircle, text: 'FSSAI Certified Partners' },
                                 { icon: FiCheckCircle, text: 'Real-time Listings' },
-                            ].map(({ icon: Icon, text }) => (
-                                <div key={text} className="flex items-center gap-2 text-white/80 text-sm">
-                                    <Icon className="w-4 h-4 text-[#10B981]" />
-                                    {text}
-                                </div>
-                            ))}
+                            ].map(
+                                ({ icon: Icon, text }) => (
+                                    // eslint-disable-next-line no-unused-vars
+                                    <div key={text} className="flex items-center gap-2 text-white/80 text-sm">
+                                        <Icon className="w-4 h-4 text-[#10B981]" />
+                                        {text}
+                                    </div>
+                                ))}
                         </div>
                     </div>
 
@@ -219,20 +221,22 @@ export default function LandingPage() {
                         {/* Connector line */}
                         <div className="hidden md:block absolute top-20 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-[#059669] to-[#0891B2]" />
 
-                        {howItWorks.map(({ step, title, desc, icon: Icon }, i) => (
-                            <div key={step} className={`card p-8 text-center animate-fade-in-up delay-${(i + 1) * 200}`}>
-                                <div className="relative inline-block mb-6">
-                                    <div className="w-20 h-20 rounded-3xl bg-[#ECFDF5] flex items-center justify-center shadow-sm">
-                                        <Icon className="w-10 h-10 text-[#059669]" />
+                        {howItWorks.map(
+                            // eslint-disable-next-line no-unused-vars
+                            ({ step, title, desc, icon: Icon }, i) => (
+                                <div key={step} className={`card p-8 text-center animate-fade-in-up delay-${(i + 1) * 200}`}>
+                                    <div className="relative inline-block mb-6">
+                                        <div className="w-20 h-20 rounded-3xl bg-[#ECFDF5] flex items-center justify-center shadow-sm">
+                                            <Icon className="w-10 h-10 text-[#059669]" />
+                                        </div>
+                                        <span className="absolute -top-2 -right-2 w-7 h-7 bg-[#064E3B] text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                            {step}
+                                        </span>
                                     </div>
-                                    <span className="absolute -top-2 -right-2 w-7 h-7 bg-[#064E3B] text-white text-xs font-bold rounded-full flex items-center justify-center">
-                                        {step}
-                                    </span>
+                                    <h3 className="text-xl font-bold text-[#064E3B] mb-3">{title}</h3>
+                                    <p className="text-[#065F46] leading-relaxed text-sm">{desc}</p>
                                 </div>
-                                <h3 className="text-xl font-bold text-[#064E3B] mb-3">{title}</h3>
-                                <p className="text-[#065F46] leading-relaxed text-sm">{desc}</p>
-                            </div>
-                        ))}
+                            ))}
                     </div>
 
                     <div className="text-center mt-10">
@@ -339,17 +343,19 @@ export default function LandingPage() {
                                     title: 'For NGOs & Communities',
                                     desc: 'Access free food donations at scale directly from restaurants. Feed more beneficiaries with zero cost.',
                                 },
-                            ].map(({ icon: Icon, title, desc }) => (
-                                <div key={title} className="flex gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-[#D1FAE5] flex items-center justify-center shrink-0">
-                                        <Icon className="w-6 h-6 text-[#059669]" />
+                            ].map(
+                                // eslint-disable-next-line no-unused-vars
+                                ({ icon: Icon, title, desc }, idx) => (
+                                    <div key={title} className="flex gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-[#D1FAE5] flex items-center justify-center shrink-0">
+                                            <Icon className="w-6 h-6 text-[#059669]" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-[#064E3B] mb-1">{title}</h3>
+                                            <p className="text-sm text-[#065F46] leading-relaxed">{desc}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-[#064E3B] mb-1">{title}</h3>
-                                        <p className="text-sm text-[#065F46] leading-relaxed">{desc}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                         <div className="flex gap-4 mt-8">
                             <Link to="/register" className="btn-primary">Join Free</Link>

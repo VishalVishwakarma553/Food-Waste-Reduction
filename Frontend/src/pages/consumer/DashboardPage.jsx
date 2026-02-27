@@ -19,6 +19,7 @@ const BadgeIconMap = {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import FoodCard from '../../components/shared/FoodCard';
 
+// eslint-disable-next-line no-unused-vars
 function StatCard({ label, value, sub, icon: Icon, color }) {
     return (
         <div className="card p-6">
@@ -193,6 +194,7 @@ export default function DashboardPage() {
                         { to: '/consumer/impact', icon: Globe, label: 'My Impact' },
                         { to: '/consumer/favorites', icon: Heart, label: 'Favorites' },
                     ].map(({ to, icon: Icon, label }) => (
+                        // eslint-disable-next-line no-unused-vars
                         <Link key={to} to={to} className="card p-5 flex flex-col items-center gap-2 text-center cursor-pointer hover:bg-[#F0FDF4] group">
                             <span className="text-[#059669] group-hover:scale-110 transition-transform"><Icon className="w-8 h-8" strokeWidth={1.5} /></span>
                             <span className="text-sm font-semibold text-[#064E3B]">{label}</span>

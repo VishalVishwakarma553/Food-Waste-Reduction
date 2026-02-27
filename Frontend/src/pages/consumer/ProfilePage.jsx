@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 const tabs = ['Profile', 'Security', 'Notifications', 'Privacy'];
 
 export default function ProfilePage() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('Profile');
     const [editing, setEditing] = useState(false);
     const [saved, setSaved] = useState(false);

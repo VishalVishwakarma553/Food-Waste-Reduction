@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { mockUser } from '../data/mockData';
+import { mockUser, mockRestaurantUser } from '../data/mockData';
 
 const AuthContext = createContext(null);
 
@@ -16,14 +16,18 @@ export function AuthProvider({ children }) {
 
     const login = (email, password) => {
         // Mock login - In future, call API
-        const loggedInUser = { ...mockUser, email };
+        // Simple logic for demo: if email contains "restaurant" or "partner", it's a restaurant.
+        const isRestaurant = email.toLowerCase().includes('restaurant') || email.toLowerCase().includes('partner');
+        const loggedInUser = isRestaurant ? { ...mockRestaurantUser, email } : { ...mockUser, email };
+
         setUser(loggedInUser);
         localStorage.setItem('foodsave_user', JSON.stringify(loggedInUser));
         return Promise.resolve(loggedInUser);
     };
 
     const register = (data) => {
-        const newUser = { ...mockUser, ...data, id: 'user-new' };
+        const baseUser = data.role === 'restaurant' ? mockRestaurantUser : mockUser;
+        const newUser = { ...baseUser, ...data, id: 'user-new' };
         setUser(newUser);
         localStorage.setItem('foodsave_user', JSON.stringify(newUser));
         return Promise.resolve(newUser);
