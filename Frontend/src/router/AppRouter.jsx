@@ -53,6 +53,18 @@ function ProtectedRoute({ children }) {
     return children;
 }
 
+function RestaurantRoute({ children }) {
+    const { isAuthenticated, isLoading, user } = useAuth();
+    if (isLoading) return (
+        <div className="min-h-screen flex items-center justify-center bg-[#ECFDF5]">
+            <div className="w-12 h-12 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin" />
+        </div>
+    );
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (user?.role !== 'restaurant') return <Navigate to="/consumer/dashboard" replace />;
+    return children;
+}
+
 export default function AppRouter() {
     return (
         <Routes>
@@ -94,9 +106,9 @@ export default function AppRouter() {
 
             {/* Protected Restaurant Routes */}
             <Route element={
-                <ProtectedRoute>
+                <RestaurantRoute>
                     <RestaurantLayout />
-                </ProtectedRoute>
+                </RestaurantRoute>
             }>
                 <Route path="/restaurant/dashboard" element={<RestaurantDashboardPage />} />
                 <Route path="/restaurant/add-listing" element={<AddListingPage />} />

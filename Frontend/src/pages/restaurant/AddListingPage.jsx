@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FiUploadCloud, FiClock, FiPlus, FiTrash2, FiInfo, FiChevronRight, FiChevronLeft, FiCheck } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import api from '../../lib/api';
 
 const STEPS = [
     { id: 1, title: 'Basic Info' },
@@ -83,14 +84,54 @@ export default function AddListingPage() {
         if (currentStep > 1) setCurrentStep(c => c - 1);
     };
 
-    const handlePublish = () => {
-        toast.success("Listing published successfully!");
-        navigate('/restaurant/listings');
-    };
+    const handlePublish = async (status = 'active') => {
+        if (!formData.name || !formData.category) {
+            toast.error('Please fill in the food name and category before publishing.');
+            return;
+        }
+        if (!formData.quantity || !formData.discountedPrice) {
+            toast.error('Please fill in quantity and discounted price.');
+            return;
+        }
+        if (!formData.expiryDate || !formData.expiryTime) {
+            toast.error('Please set the expiry date and time.');
+            return;
+        }
 
-    const handleSaveDraft = () => {
-        toast.success("Draft saved successfully.");
-        navigate('/restaurant/listings');
+        try {
+            const fd = new FormData();
+            // Append all scalar fields
+            const scalarFields = [
+                'name', 'category', 'subCategory', 'description', 'tags',
+                'quantity', 'unit', 'originalPrice', 'discountedPrice', 'minOrder',
+                'expiryDate', 'expiryTime', 'availableFrom', 'availableUntil',
+                'ingredients', 'storage', 'packaging', 'instructions', 'deliveryRadius'
+            ];
+            scalarFields.forEach(key => {
+                if (formData[key] !== '' && formData[key] !== null && formData[key] !== undefined) {
+                    fd.append(key, formData[key]);
+                }
+            });
+            fd.append('pickup', formData.pickup);
+            fd.append('delivery', formData.delivery);
+            fd.append('allergens', JSON.stringify(formData.allergens));
+            fd.append('dietary', JSON.stringify(formData.dietary));
+            fd.append('status', status);
+
+            // Attach image files
+            formData.images.forEach(img => {
+                if (img instanceof File) fd.append('images', img);
+            });
+
+            await api.post('/restaurant/listings', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            toast.success(status === 'draft' ? 'Draft saved successfully.' : 'Listing published successfully!');
+            navigate('/restaurant/listings');
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to save listing. Please try again.');
+        }
     };
 
     return (
@@ -101,7 +142,7 @@ export default function AddListingPage() {
                     <p className="text-gray-500 text-sm mt-1">Create a new food listing to rescue surplus food.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button onClick={handleSaveDraft} className="px-4 py-2 font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+                    <button onClick={() => handlePublish('draft')} className="px-4 py-2 font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
                         Save Draft
                     </button>
                     {currentStep === STEPS.length && (
@@ -198,28 +239,59 @@ export default function AddListingPage() {
                     <div className="space-y-6 animate-fadeIn">
                         <h2 className="text-xl font-bold text-[#111827] mb-6">Food Images</h2>
 
-                        <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+                        <label className="block border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                multiple
+                                className="hidden"
+                                onChange={(e) => {
+                                    const files = Array.from(e.target.files).slice(0, 5 - formData.images.length);
+                                    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
+                                }}
+                            />
                             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
                                 <FiUploadCloud className="w-8 h-8 text-[#059669]" />
                             </div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-1">Click or drag images here</h3>
+                            <h3 className="text-lg font-medium text-gray-900 mb-1">Click to upload images</h3>
                             <p className="text-sm text-gray-500 mb-4">Upload high-quality photos to make your food appealing.</p>
                             <span className="text-xs text-gray-400">Max 5 images. PNG, JPG or WEBP up to 5MB.</span>
-                        </div>
+                        </label>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-                            {/* Dummy Image Previews */}
-                            <div className="aspect-square rounded-xl bg-gray-100 border border-gray-200 relative group overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=300" alt="Preview" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <button className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"><FiTrash2 /></button>
-                                </div>
-                                <span className="absolute top-2 left-2 bg-[#059669] text-white text-xs px-2 py-0.5 rounded-full font-medium">Primary</span>
+                        {formData.images.length > 0 && (
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+                                {formData.images.map((img, idx) => (
+                                    <div key={idx} className="aspect-square rounded-xl bg-gray-100 border border-gray-200 relative group overflow-hidden">
+                                        <img
+                                            src={URL.createObjectURL(img)}
+                                            alt={`Preview ${idx + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }))}
+                                                className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                                            >
+                                                <FiTrash2 />
+                                            </button>
+                                        </div>
+                                        {idx === 0 && <span className="absolute top-2 left-2 bg-[#059669] text-white text-xs px-2 py-0.5 rounded-full font-medium">Primary</span>}
+                                    </div>
+                                ))}
+                                {formData.images.length < 5 && (
+                                    <label className="aspect-square rounded-xl bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
+                                        <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (file) setFormData(prev => ({ ...prev, images: [...prev.images, file] }));
+                                            }}
+                                        />
+                                        <FiPlus className="w-8 h-8 text-gray-400" />
+                                    </label>
+                                )}
                             </div>
-                            <div className="aspect-square rounded-xl bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
-                                <FiPlus className="w-8 h-8 text-gray-400" />
-                            </div>
-                        </div>
+                        )}
                     </div>
                 )}
 
@@ -264,8 +336,8 @@ export default function AddListingPage() {
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
                                     <input
-                                        type="number" readOnly name="originalPrice" value={formData.originalPrice} onChange={handleInputChange}
-                                        className="w-full cursor-not-allowed pl-8 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] outline-none"
+                                        type="number" name="originalPrice" value={formData.originalPrice} onChange={handleInputChange}
+                                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] outline-none"
                                         placeholder="0.00"
                                     />
                                 </div>
@@ -275,8 +347,8 @@ export default function AddListingPage() {
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
                                     <input
-                                        type="number" name="discountedPrice" readOnly value={formData.discountedPrice} onChange={handleInputChange}
-                                        className="w-full cursor-not-allowed pl-8 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] outline-none font-semibold text-[#059669]"
+                                        type="number" name="discountedPrice" value={formData.discountedPrice} onChange={handleInputChange}
+                                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] outline-none font-semibold text-[#059669]"
                                         placeholder="0.00"
                                     />
                                 </div>

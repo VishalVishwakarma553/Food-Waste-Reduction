@@ -25,8 +25,8 @@ export default function LoginPage() {
                 navigate('/consumer/dashboard');
             }
 
-        } catch {
-            setError('Invalid email or password. Please try again.');
+        } catch (err) {
+            setError(err.response?.data?.error || 'Invalid email or password. Please try again.');
         } finally {
             setLoading(false);
         }

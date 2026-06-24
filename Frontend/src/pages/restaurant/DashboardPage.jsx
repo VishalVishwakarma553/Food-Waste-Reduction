@@ -1,12 +1,14 @@
 import {
-    FiPackage, FiShoppingBag, FiDollarSign, FiStar,
-    FiTrendingUp, FiClock, FiAlertCircle, FiCheckCircle, FiChevronRight, FiBell
+    FiPackage, FiShoppingBag, FiStar,
+    FiTrendingUp, FiClock, FiCheckCircle, FiChevronRight, FiBell
 } from 'react-icons/fi';
 import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
+const API_BASE = 'http://localhost:8080';
 
 // Dummy Data
 const impactData = [
@@ -34,20 +36,32 @@ const alerts = [
 
 
 export default function DashboardPage() {
+    const { user } = useAuth();
+    const displayName = user?.businessName || user?.name || 'Your Business';
+    const logoUrl = user?.businessImage
+        ? `${API_BASE}${user.businessImage}`
+        : null;
+
     return (
         <div className="space-y-6">
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-[#064E3B] to-[#059669] rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden flex flex-col sm:flex-row items-center sm:items-start justify-between">
                 <div className="relative z-10 flex items-center gap-4 sm:gap-6 mb-4 sm:mb-0">
-                    <img
-                        src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=200&h=200"
-                        alt="Restaurant Logo"
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-4 border-white/20 shadow-lg"
-                    />
+                    {logoUrl ? (
+                        <img
+                            src={logoUrl}
+                            alt={`${displayName} Logo`}
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-4 border-white/20 shadow-lg"
+                        />
+                    ) : (
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-4 border-white/20 shadow-lg bg-white/20 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold">
+                            {displayName.charAt(0).toUpperCase()}
+                        </div>
+                    )}
                     <div>
                         <div className="flex items-center gap-2">
                             <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: "'Playfair Display SC', serif" }}>
-                                Welcome back, Bakehouse Green
+                                Welcome back, {displayName}
                             </h1>
                             <span className="bg-[#10B981] text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
                                 <FiCheckCircle className="w-3 h-3" /> Verified

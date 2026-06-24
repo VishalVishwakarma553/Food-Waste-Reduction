@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMail, FiArrowRight } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+import api from '../../lib/api';
 
 export default function ForgotPasswordPage() {
     const [step, setStep] = useState(1); // 1: email, 2: otp, 3: new password, 4: success
@@ -11,22 +13,54 @@ export default function ForgotPasswordPage() {
     const [timer, setTimer] = useState(60);
     const [loading, setLoading] = useState(false);
 
-    const sendOtp = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setTimeout(() => { setLoading(false); setStep(2); let t = 60; const i = setInterval(() => { t--; setTimer(t); if (t <= 0) clearInterval(i); }, 1000); }, 1000);
+    const startTimer = () => {
+        setTimer(60);
+        const i = setInterval(() => {
+            setTimer(t => { if (t <= 1) { clearInterval(i); return 0; } return t - 1; });
+        }, 1000);
     };
 
-    const verifyOtp = (e) => {
+    const sendOtp = async (e) => {
         e.preventDefault();
-        setStep(3);
+        setLoading(true);
+        try {
+            const { data } = await api.post('/auth/forgot-password', { email });
+            // ponytail: OTP in response for dev — remove once email service is wired
+            toast.success(`OTP sent! (Dev: ${data.otp})`);
+            setStep(2);
+            startTimer();
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Something went wrong');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const resetPassword = (e) => {
+    const verifyOtp = async (e) => {
         e.preventDefault();
-        if (newPass !== confirmPass) return;
         setLoading(true);
-        setTimeout(() => { setLoading(false); setStep(4); }, 1000);
+        try {
+            await api.post('/auth/verify-otp', { email, otp: otp.join('') });
+            setStep(3);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Invalid or expired OTP');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetPassword = async (e) => {
+        e.preventDefault();
+        if (newPass !== confirmPass) { toast.error('Passwords do not match'); return; }
+        setLoading(true);
+        try {
+            await api.post('/auth/reset-password', { email, otp: otp.join(''), newPassword: newPass });
+            setStep(4);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Reset failed. Try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleOtpChange = (val, idx) => {
@@ -103,10 +137,12 @@ export default function ForgotPasswordPage() {
                         <p className="text-center text-sm text-[#065F46]">
                             {timer > 0
                                 ? <>Resend in <span className="font-semibold text-[#064E3B]">{timer}s</span></>
-                                : <button type="button" onClick={() => setTimer(60)} className="text-[#059669] font-semibold hover:underline cursor-pointer">Resend OTP</button>
+                                : <button type="button" onClick={sendOtp} className="text-[#059669] font-semibold hover:underline cursor-pointer">Resend OTP</button>
                             }
                         </p>
-                        <button type="submit" className="btn-primary w-full justify-center py-3">Verify OTP</button>
+                        <button type="submit" disabled={loading || otp.join('').length < 6} className="btn-primary w-full justify-center py-3 disabled:opacity-60">
+                            {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : 'Verify OTP'}
+                        </button>
                     </form>
                 </>
             )}

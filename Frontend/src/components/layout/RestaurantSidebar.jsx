@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
     FiGrid, FiList, FiPlusCircle, FiBarChart2, FiSettings,
@@ -16,8 +16,12 @@ const navItems = [
     { to: '/restaurant/settings', icon: FiSettings, label: 'Settings' },
 ];
 
+const API_BASE = 'http://localhost:8080';
+
 export default function RestaurantSidebar() {
     const { user, logout } = useAuth();
+    const displayName = user?.businessName || user?.name || 'Your Business';
+    const logoUrl = user?.businessImage ? `${API_BASE}${user.businessImage}` : null;
 
     return (
         <aside className="w-64 min-h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">
@@ -39,13 +43,19 @@ export default function RestaurantSidebar() {
             {/* Restaurant Profile Mini */}
             <div className="p-4 border-b border-[#D1FAE5]">
                 <div className="flex items-center gap-3">
-                    <img
-                        src={user?.avatar || "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
-                        alt={user?.name || "Restaurant"}
-                        className="w-10 h-10 rounded-xl object-cover ring-2 ring-[#D1FAE5]"
-                    />
+                    {logoUrl ? (
+                        <img
+                            src={logoUrl}
+                            alt={displayName}
+                            className="w-10 h-10 rounded-xl object-cover ring-2 ring-[#D1FAE5]"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#059669] to-[#064E3B] flex items-center justify-center text-white font-bold text-lg ring-2 ring-[#D1FAE5] select-none">
+                            {displayName.charAt(0).toUpperCase()}
+                        </div>
+                    )}
                     <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#064E3B] truncate">{user?.name || "Bakehouse Green"}</p>
+                        <p className="text-sm font-semibold text-[#064E3B] truncate">{displayName}</p>
                         <p className="text-xs text-[#065F46] truncate">Verified Partner ✓</p>
                     </div>
                 </div>

@@ -1,0 +1,18 @@
+-- Add new columns to User table for auth
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "phone" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "role" TEXT NOT NULL DEFAULT 'consumer';
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "address" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "city" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "state" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "pincode" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "resetOtp" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "otpExpiry" TIMESTAMP(3);
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- Remove duplicate emails (keep lowest id)
+DELETE FROM "User" WHERE "id" NOT IN (
+  SELECT MIN("id") FROM "User" GROUP BY "email"
+);
+
+-- CreateUniqueIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
