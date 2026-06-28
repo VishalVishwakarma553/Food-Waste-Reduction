@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiStar, FiCheckCircle, FiMapPin, FiFeather } from 'react-icons/fi';
 import { Leaf, Utensils, Store, Users, ShoppingBag, Globe, HandHeart } from 'lucide-react';
 
 import FoodCard from '../../components/shared/FoodCard';
 import { mockFoodItems, mockTestimonials } from '../../data/mockData';
+import api from '../../lib/api';
 
 // Animated counter
 function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
@@ -72,6 +73,30 @@ const partnerLogos = [
 ];
 
 export default function LandingPage() {
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [listings, setListings] = useState([]);
+
+    useEffect(() => {
+        api.get('/public/listings?limit=4')
+            .then(({ data }) => {
+                setListings(data.listings);
+            })
+            .catch(() => { /* fallback */ });
+    }, []);
+
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            navigate(`/browse?search=${encodeURIComponent(searchQuery)}`);
+        } else {
+            navigate('/browse');
+        }
+    };
+
+    const displayItems = listings.length 
+        ? listings 
+        : mockFoodItems.filter(f => f.isFeatured).concat(mockFoodItems.filter(f => !f.isFeatured)).slice(0, 4);
+
     return (
         <div className="overflow-x-hidden">
             {/* ========== HERO ========== */}
@@ -108,15 +133,18 @@ export default function LandingPage() {
                                 <input
                                     type="text"
                                     placeholder="Enter your area (e.g., Koramangala, Bengaluru)"
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleSearch()}
                                     className="flex-1 outline-none text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent py-2"
                                 />
                             </div>
-                            <Link
-                                to="/browse"
+                            <button
+                                onClick={handleSearch}
                                 className="btn-primary text-sm px-6 shrink-0"
                             >
                                 Find Free Food <FiArrowRight className="w-4 h-4" />
-                            </Link>
+                            </button>
                         </div>
 
                         {/* Trust badges */}
@@ -262,7 +290,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {mockFoodItems.filter(f => f.isFeatured).concat(mockFoodItems.filter(f => !f.isFeatured)).slice(0, 4).map(food => (
+                        {displayItems.map(food => (
                             <FoodCard key={food.id} food={food} showLoginOverlay />
                         ))}
                     </div>
