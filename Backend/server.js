@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import { mkdirSync } from "fs";
 import authRoutes from "./routes/auth.js";
 import restaurantRoutes from "./routes/restaurant.js";
+import publicRoutes from "./routes/public.js";
+import consumerRoutes from "./routes/consumer.js";
 
 dotenv.config();
 
@@ -23,6 +25,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurant", restaurantRoutes);
+app.use("/api/public", publicRoutes);
+app.use("/api/consumer", consumerRoutes);
 
 app.get("/", (req, res) => res.json({ message: "Food Waste Reduction Backend is running" }));
 

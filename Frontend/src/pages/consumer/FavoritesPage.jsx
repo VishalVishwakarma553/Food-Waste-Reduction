@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiHeart, FiBell, FiTrash2, FiShoppingCart } from 'react-icons/fi';
+import { FiHeart, FiBell, FiTrash2, FiShoppingCart, FiLoader } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
-import { mockFoodItems, mockRestaurants } from '../../data/mockData';
+
+const API_BASE = 'http://localhost:8080';
 
 export default function FavoritesPage() {
-    const { favorites, toggleFavorite, favoriteRestaurants, toggleFavoriteRestaurant, addToCart } = useCart();
+    const { favoriteItems, toggleFavorite, favoriteRestaurants, toggleFavoriteRestaurant, addToCart, favLoading } = useCart();
     const [activeTab, setActiveTab] = useState('food');
 
-    const favFood = mockFoodItems.filter(f => favorites.includes(f.id));
-    const favRests = mockRestaurants.filter(r => favoriteRestaurants.includes(r.id));
+    const favFood = favoriteItems;
+    const favRests = []; // Restaurant favorites localStorage-based for now
+
 
     return (
         <div className="space-y-6">
@@ -25,8 +27,16 @@ export default function FavoritesPage() {
                 </button>
             </div>
 
+            {/* Loading state */}
+            {favLoading && activeTab === 'food' && (
+                <div className="text-center py-20">
+                    <FiLoader className="w-8 h-8 animate-spin mx-auto text-[#059669] mb-3" />
+                    <p className="text-[#065F46]">Loading favorites...</p>
+                </div>
+            )}
+
             {/* Food Tab */}
-            {activeTab === 'food' && (
+            {activeTab === 'food' && !favLoading && (
                 favFood.length === 0 ? (
                     <div className="text-center py-20">
                         <div className="text-6xl mb-4">❤️</div>
@@ -41,7 +51,8 @@ export default function FavoritesPage() {
                             return (
                                 <div key={food.id} className={`card overflow-hidden ${isExpired ? 'opacity-60' : ''}`}>
                                     <div className="relative">
-                                        <img src={food.images[0]} alt={food.name} className="w-full h-44 object-cover" />
+                                        <img src={food.images?.[0]} alt={food.name}
+                                            className="w-full h-44 object-cover" />
                                         <span className="food-card-discount">{food.discount}% OFF</span>
                                         {isExpired && (
                                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -55,14 +66,14 @@ export default function FavoritesPage() {
                                     </div>
                                     <div className="p-4">
                                         <h3 className="font-bold text-[#064E3B] text-sm mb-1">{food.name}</h3>
-                                        <p className="text-xs text-[#065F46] mb-3">{food.restaurantName}</p>
-                                        <div className="flex items-center justify-between">
+                                        <p className="text-xs text-[#065F46]">{food.restaurantName}</p>
+                                        <div className="flex items-center justify-between mt-3">
                                             <div>
                                                 <span className="font-bold text-[#059669]">₹{food.discountedPrice}</span>
                                                 <span className="text-xs text-[#065F46] line-through ml-2">₹{food.originalPrice}</span>
                                             </div>
                                             {!isExpired ? (
-                                                <button onClick={() => addToCart(food.id, 1, food.pickupSlots[0])}
+                                                <button onClick={() => addToCart(food.id, 1, food.pickupSlots?.[0], food)}
                                                     className="flex items-center gap-1.5 text-xs font-semibold bg-[#059669] text-white px-3 py-1.5 rounded-full hover:bg-[#047857] cursor-pointer transition-colors">
                                                     <FiShoppingCart className="w-3.5 h-3.5" /> Add
                                                 </button>
@@ -77,6 +88,7 @@ export default function FavoritesPage() {
                     </div>
                 )
             )}
+
 
             {/* Restaurants Tab */}
             {activeTab === 'restaurants' && (

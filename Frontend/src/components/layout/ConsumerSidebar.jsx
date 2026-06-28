@@ -3,8 +3,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import {
     FiGrid, FiList, FiShoppingCart, FiBarChart2, FiHeart,
-    FiBell, FiUser, FiLogOut, FiStar, FiFeather
+    FiBell, FiUser, FiLogOut, FiStar, FiFeather, FiCamera
 } from 'react-icons/fi';
+
+const API_BASE = 'http://localhost:8080';
 
 
 const navItems = [
@@ -38,11 +40,15 @@ export default function ConsumerSidebar() {
             {/* User Profile Mini */}
             <div className="p-4 border-b border-[#D1FAE5]">
                 <div className="flex items-center gap-3">
-                    <img
-                        src={user?.avatar}
-                        alt={user?.name}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D1FAE5]"
-                    />
+                    {user?.avatar ? (
+                        <img src={`${API_BASE}${user.avatar}`} alt={user?.name}
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D1FAE5]"
+                            onError={(e) => { e.target.style.display = 'none'; }} />
+                    ) : (
+                        <div className="w-10 h-10 rounded-full bg-[#D1FAE5] flex items-center justify-center shrink-0">
+                            <FiCamera className="w-4 h-4 text-[#059669]" />
+                        </div>
+                    )}
                     <div className="min-w-0">
                         <p className="text-sm font-semibold text-[#064E3B] truncate">{user?.name}</p>
                         <p className="text-xs text-[#065F46] truncate">{user?.email}</p>

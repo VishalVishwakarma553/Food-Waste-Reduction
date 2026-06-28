@@ -146,7 +146,7 @@ export default function AddListingPage() {
                         Save Draft
                     </button>
                     {currentStep === STEPS.length && (
-                        <button onClick={handlePublish} className="px-4 py-2 font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors">
+                        <button onClick={() => handlePublish('active')} className="px-4 py-2 font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors">
                             Publish Listing
                         </button>
                     )}

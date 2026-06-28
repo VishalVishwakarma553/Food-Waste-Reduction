@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiHeart, FiClock, FiMapPin, FiShoppingCart, FiStar } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { IMG_BASE_URL } from '../../lib/api';
 
 function CountdownBadge({ expiresAt }) {
     const [timeLeft, setTimeLeft] = useState('');
@@ -48,7 +49,8 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
         e.preventDefault();
         e.stopPropagation();
         if (!isAuthenticated) return;
-        addToCart(food.id, 1, food.pickupSlots[0]);
+        // pickupSlots[0] may be a string like "Available for pickup" from API
+        addToCart(food.id, 1, food.pickupSlots?.[0] || 'Pickup', food);
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
     };
@@ -59,13 +61,14 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
         if (!isAuthenticated) return;
         toggleFavorite(food.id);
     };
+    console.log(food)
 
     return (
         <Link to={isAuthenticated ? `/consumer/food/${food.id}` : '/login'} className="food-card block group relative">
             {/* Image */}
             <div className="relative overflow-hidden">
                 <img
-                    src={food.images[0]}
+                    src={food.images[0]?.startsWith('http') ? food.images[0] : `${IMG_BASE_URL}${food.images[0]}`}
                     alt={food.name}
                     className="food-card-img transition-transform duration-500 group-hover:scale-105"
                 />
@@ -113,16 +116,30 @@ export default function FoodCard({ food, showLoginOverlay = false }) {
                 </div>
 
                 <div className="flex items-center gap-1.5 mb-2">
-                    <img src={food.restaurantLogo} alt="" className="w-4 h-4 rounded-full object-cover" />
+                    {food.restaurantLogo
+                        ? <img src={food.restaurantLogo} alt="" className="w-4 h-4 rounded-full object-cover" />
+                        : <span className="w-4 h-4 rounded-full bg-[#D1FAE5] text-[#059669] text-[9px] font-bold flex items-center justify-center flex-shrink-0">{food.restaurantName?.charAt(0)}</span>
+                    }
                     <span className="text-xs text-[#065F46] truncate">{food.restaurantName}</span>
                 </div>
 
                 <div className="flex items-center gap-2 mb-3">
-                    <FiMapPin className="w-3 h-3 text-[#065F46]" />
-                    <span className="text-xs text-[#065F46]">{food.distance}km away</span>
-                    <span className="text-xs text-[#065F46]">•</span>
-                    <FiStar className="w-3 h-3 text-amber-500 fill-amber-500" />
-                    <span className="text-xs text-[#065F46]">{food.rating}</span>
+                    {food.distance != null && (
+                        <>
+                            <FiMapPin className="w-3 h-3 text-[#065F46]" />
+                            <span className="text-xs text-[#065F46]">{food.distance}km away</span>
+                            <span className="text-xs text-[#065F46]">•</span>
+                        </>
+                    )}
+                    {food.rating > 0 && (
+                        <>
+                            <FiStar className="w-3 h-3 text-amber-500 fill-amber-500" />
+                            <span className="text-xs text-[#065F46]">{food.rating}</span>
+                        </>
+                    )}
+                    {food.restaurantCity && (
+                        <span className="text-xs text-[#065F46] truncate">{food.restaurantCity}</span>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between">

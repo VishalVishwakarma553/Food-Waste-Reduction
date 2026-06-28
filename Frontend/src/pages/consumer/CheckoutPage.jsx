@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FiMapPin, FiClock, FiFileText, FiCheckCircle } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../lib/api';
 
 export default function CheckoutPage() {
     const { cartItems, clearCart } = useCart();
@@ -15,16 +17,28 @@ export default function CheckoutPage() {
 
     const foodSaved = cartItems.reduce((sum, i) => sum + 0.4 * i.quantity, 0).toFixed(1);
 
-    const handlePlaceOrder = () => {
+    const handlePlaceOrder = async () => {
         if (!accepted) return;
         setPlacing(true);
-        setTimeout(() => {
+        try {
+            await api.post('/consumer/orders', {
+                notes,
+                items: cartItems.map(i => ({
+                    listingId: i.foodId,
+                    quantity: i.quantity,
+                    pickupSlot: i.pickupSlot,
+                })),
+            });
             clearCart();
-            setPlacing(false);
             setPlaced(true);
             setTimeout(() => navigate('/consumer/orders'), 3000);
-        }, 1500);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to place order');
+        } finally {
+            setPlacing(false);
+        }
     };
+
 
     if (placed) {
         return (

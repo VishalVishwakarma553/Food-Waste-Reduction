@@ -1,19 +1,19 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { mockFoodItems } from '../data/mockData';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api from '../lib/api';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState([]);
     const [favorites, setFavorites] = useState([]);
+    const [favoriteItems, setFavoriteItems] = useState([]);
     const [favoriteRestaurants, setFavoriteRestaurants] = useState([]);
+    const [favLoading, setFavLoading] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem('foodsave_cart');
-        const storedFav = localStorage.getItem('foodsave_favorites');
         const storedFavRest = localStorage.getItem('foodsave_fav_restaurants');
         if (stored) setCartItems(JSON.parse(stored));
-        if (storedFav) setFavorites(JSON.parse(storedFav));
         if (storedFavRest) setFavoriteRestaurants(JSON.parse(storedFavRest));
     }, []);
 
@@ -22,13 +22,12 @@ export function CartProvider({ children }) {
         localStorage.setItem('foodsave_cart', JSON.stringify(items));
     };
 
-    const addToCart = (foodId, quantity = 1, pickupSlot = '') => {
-        const food = mockFoodItems.find(f => f.id === foodId);
-        if (!food) return;
+    // addToCart accepts full food object (real API or mock)
+    const addToCart = (foodId, quantity = 1, pickupSlot = '', food = null) => {
         const existing = cartItems.find(i => i.foodId === foodId);
         if (existing) {
             persistCart(cartItems.map(i => i.foodId === foodId ? { ...i, quantity: i.quantity + quantity } : i));
-        } else {
+        } else if (food) {
             persistCart([...cartItems, { foodId, quantity, pickupSlot, food }]);
         }
     };
@@ -49,15 +48,47 @@ export function CartProvider({ children }) {
     const cartTotal = cartItems.reduce((sum, i) => sum + i.food.discountedPrice * i.quantity, 0);
     const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
-    const toggleFavorite = (foodId) => {
-        let updated;
-        if (favorites.includes(foodId)) {
-            updated = favorites.filter(id => id !== foodId);
-        } else {
-            updated = [...favorites, foodId];
+    // --- Favorites (API-backed) --------------------------------
+    const fetchFavorites = useCallback(async () => {
+        const token = localStorage.getItem('foodsave_token');
+        if (!token) return;
+        setFavLoading(true);
+        try {
+            const { data } = await api.get('/consumer/favorites');
+            setFavoriteItems(data.favorites);
+            setFavorites(data.favorites.map(f => String(f.id)));
+        } catch {
+            // Silently fail
+        } finally {
+            setFavLoading(false);
         }
-        setFavorites(updated);
-        localStorage.setItem('foodsave_favorites', JSON.stringify(updated));
+    }, []);
+
+    // Auto-fetch favorites when user is authenticated
+    useEffect(() => {
+        const token = localStorage.getItem('foodsave_token');
+        if (token) fetchFavorites();
+    }, [fetchFavorites]);
+
+    const toggleFavorite = async (foodId) => {
+        const idStr = String(foodId);
+        const wasFav = favorites.includes(idStr);
+        // Optimistic update
+        if (wasFav) {
+            setFavorites(prev => prev.filter(id => id !== idStr));
+            setFavoriteItems(prev => prev.filter(f => String(f.id) !== idStr));
+        }
+        try {
+            const { data } = await api.post(`/consumer/favorites/${foodId}`);
+            if (data.favorited) {
+                fetchFavorites();
+            }
+        } catch {
+            if (!wasFav) {
+                setFavorites(prev => prev.filter(id => id !== idStr));
+                setFavoriteItems(prev => prev.filter(f => String(f.id) !== idStr));
+            }
+        }
     };
 
     const toggleFavoriteRestaurant = (restId) => {
@@ -74,10 +105,10 @@ export function CartProvider({ children }) {
     return (
         <CartContext.Provider value={{
             cartItems, cartTotal, cartCount,
-            favorites, favoriteRestaurants,
+            favorites, favoriteItems, favoriteRestaurants, favLoading,
             addToCart, removeFromCart, updateQuantity, clearCart, updatePickupSlot,
-            toggleFavorite, toggleFavoriteRestaurant,
-            isFavorite: (id) => favorites.includes(id),
+            toggleFavorite, toggleFavoriteRestaurant, fetchFavorites,
+            isFavorite: (id) => favorites.includes(String(id)),
             isFavoriteRestaurant: (id) => favoriteRestaurants.includes(id),
         }}>
             {children}

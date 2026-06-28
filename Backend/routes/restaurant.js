@@ -9,8 +9,14 @@ import {
     createListing,
     getListings,
     updateListing,
-    deleteListing
+    deleteListing,
+    getStats,
+    exportListingsCSV
 } from "../controllers/restaurantController.js";
+import {
+    getRestaurantOrders,
+    updateOrderStatus
+} from "../controllers/orderController.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,9 +54,15 @@ router.get("/me", getProfile);
 router.patch("/settings", upload.single("businessImage"), updateSettings);
 
 // Listings
+router.get("/stats", getStats);
 router.get("/listings", getListings);
+router.get("/listings/export", exportListingsCSV); // must be before :id
 router.post("/listings", upload.array("images", 5), createListing);
 router.patch("/listings/:id", upload.array("images", 5), updateListing);
 router.delete("/listings/:id", deleteListing);
+
+// Orders
+router.get("/orders", getRestaurantOrders);
+router.patch("/orders/:id/status", updateOrderStatus);
 
 export default router;

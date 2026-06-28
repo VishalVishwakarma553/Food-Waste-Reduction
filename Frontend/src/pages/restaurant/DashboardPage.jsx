@@ -7,6 +7,8 @@ import {
 } from 'recharts';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react';
+import api from '../../lib/api';
 
 const API_BASE = 'http://localhost:8080';
 
@@ -41,6 +43,11 @@ export default function DashboardPage() {
     const logoUrl = user?.businessImage
         ? `${API_BASE}${user.businessImage}`
         : null;
+
+    const [stats, setStats] = useState({ total: 0, active: 0, draft: 0, expired: 0 });
+    useEffect(() => {
+        api.get('/restaurant/stats').then(({ data }) => setStats(data)).catch(() => {});
+    }, []);
 
     return (
         <div className="space-y-6">
@@ -81,10 +88,10 @@ export default function DashboardPage() {
 
             {/* Key Metrics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MetricCard icon={FiPackage} label="Active Listings" value="24" trend="+3 from yesterday" color="blue" />
-                <MetricCard icon={FiShoppingBag} label="Orders Today" value="18" subValue="21.5 kg" trend="+12% from last week" color="green" />
-                <MetricCard icon={FiTrendingUp} label="Meals Provided" value="380" trend="Lifetime impact" color="teal" />
-                <MetricCard icon={FiStar} label="Sustainability Score" value="A+" subValue="98/100" trend="Top 5% in city" color="amber" />
+                <MetricCard icon={FiPackage} label="Active Listings" value={stats.active} trend={`${stats.total} total`} color="blue" />
+                <MetricCard icon={FiShoppingBag} label="Draft Listings" value={stats.draft} trend="Unpublished" color="green" />
+                <MetricCard icon={FiTrendingUp} label="Expired Listings" value={stats.expired} trend="Need attention" color="teal" />
+                <MetricCard icon={FiStar} label="Total Listings" value={stats.total} trend="All time" color="amber" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

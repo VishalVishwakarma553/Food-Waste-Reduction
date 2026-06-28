@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiChevronRight } from 'react-icons/fi';
-import { mockOrders } from '../../data/mockData';
+import api from '../../lib/api';
 
 const tabs = ['All', 'Active', 'Completed', 'Cancelled'];
 
 const statusConfig = {
-    pending: { label: 'Pending', cls: 'status-pending' },
+    pending:   { label: 'Pending',   cls: 'status-pending' },
     confirmed: { label: 'Confirmed', cls: 'status-confirmed' },
-    ready: { label: 'Ready', cls: 'status-ready' },
+    ready:     { label: 'Ready',     cls: 'status-ready' },
     completed: { label: 'Completed', cls: 'status-completed' },
     cancelled: { label: 'Cancelled', cls: 'status-cancelled' },
 };
@@ -16,15 +16,25 @@ const statusConfig = {
 export default function OrdersPage() {
     const [activeTab, setActiveTab] = useState('All');
     const [search, setSearch] = useState('');
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const filtered = mockOrders.filter(o => {
+    useEffect(() => {
+        api.get('/consumer/orders')
+            .then(r => setOrders(r.data.orders))
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, []);
+
+    const filtered = orders.filter(o => {
         const matchTab =
             activeTab === 'All' ? true :
-                activeTab === 'Active' ? ['pending', 'confirmed', 'ready'].includes(o.status) :
-                    activeTab === 'Completed' ? o.status === 'completed' :
-                        o.status === 'cancelled';
-        const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) ||
-            o.restaurantName.toLowerCase().includes(search.toLowerCase());
+            activeTab === 'Active' ? ['pending', 'confirmed', 'ready'].includes(o.status) :
+            activeTab === 'Completed' ? o.status === 'completed' :
+            o.status === 'cancelled';
+        const matchSearch =
+            String(o.id).includes(search) ||
+            (o.items[0]?.restaurantName || '').toLowerCase().includes(search.toLowerCase());
         return matchTab && matchSearch;
     });
 
@@ -50,7 +60,9 @@ export default function OrdersPage() {
                 ))}
             </div>
 
-            {filtered.length === 0 ? (
+            {loading ? (
+                <div className="text-center py-20 text-[#065F46]">Loading orders...</div>
+            ) : filtered.length === 0 ? (
                 <div className="text-center py-20">
                     <div className="text-6xl mb-4">📦</div>
                     <h3 className="text-xl font-bold text-[#064E3B] mb-2">No orders found</h3>
@@ -59,37 +71,41 @@ export default function OrdersPage() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {filtered.map(order => (
-                        <Link
-                            key={order.id}
-                            to={`/consumer/order/${order.id}`}
-                            className="card-flat p-5 flex items-center gap-4 hover:border-[#10B981] transition-all cursor-pointer block"
-                        >
-                            <img src={order.restaurantLogo} alt="" className="w-14 h-14 rounded-2xl object-cover shrink-0" />
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-start gap-2 justify-between flex-wrap">
-                                    <div>
-                                        <p className="font-bold text-[#064E3B] text-sm">{order.restaurantName}</p>
-                                        <p className="text-xs text-[#065F46] mt-0.5">#{order.id}</p>
+                    {filtered.map(order => {
+                        const restaurantName = order.items[0]?.restaurantName || 'Restaurant';
+                        const image = order.items[0]?.image;
+                        return (
+                            <Link
+                                key={order.id}
+                                to={`/consumer/order/${order.id}`}
+                                className="card-flat p-5 flex items-center gap-4 hover:border-[#10B981] transition-all cursor-pointer block"
+                            >
+                                {image
+                                    ? <img src={`http://localhost:8080${image}`} alt="" className="w-14 h-14 rounded-2xl object-cover shrink-0" />
+                                    : <div className="w-14 h-14 rounded-2xl bg-[#D1FAE5] flex items-center justify-center text-2xl shrink-0">🍱</div>
+                                }
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-start gap-2 justify-between flex-wrap">
+                                        <div>
+                                            <p className="font-bold text-[#064E3B] text-sm">{restaurantName}</p>
+                                            <p className="text-xs text-[#065F46] mt-0.5">#{order.id}</p>
+                                        </div>
+                                        <span className={`badge text-xs ${statusConfig[order.status]?.cls}`}>
+                                            {statusConfig[order.status]?.label}
+                                        </span>
                                     </div>
-                                    <span className={`badge text-xs ${statusConfig[order.status]?.cls}`}>
-                                        {statusConfig[order.status]?.label}
-                                    </span>
+                                    <div className="flex items-center gap-4 mt-2 flex-wrap">
+                                        <span className="text-xs text-[#065F46]">
+                                            {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </span>
+                                        <span className="text-xs text-[#065F46]">{order.items.length} item{order.items.length > 1 ? 's' : ''}</span>
+                                        <span className="font-bold text-[#059669] text-sm">Free</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4 mt-2 flex-wrap">
-                                    <span className="text-xs text-[#065F46]">
-                                        {new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                    </span>
-                                    <span className="text-xs text-[#065F46]">{order.items.length} item{order.items.length > 1 ? 's' : ''}</span>
-                                    <span className="font-bold text-[#059669] text-sm">₹{order.total}</span>
-                                    {!order.isReviewed && order.status === 'completed' && (
-                                        <span className="badge badge-amber text-xs">Rate & Review</span>
-                                    )}
-                                </div>
-                            </div>
-                            <FiChevronRight className="w-5 h-5 text-[#065F46] shrink-0" />
-                        </Link>
-                    ))}
+                                <FiChevronRight className="w-5 h-5 text-[#065F46] shrink-0" />
+                            </Link>
+                        );
+                    })}
                 </div>
             )}
         </div>

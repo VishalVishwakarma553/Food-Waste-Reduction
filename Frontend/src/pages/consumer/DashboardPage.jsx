@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import { mockFoodItems, mockOrders, mockImpactChartData } from '../../data/mockData';
+import api from '../../lib/api';
+import toast from 'react-hot-toast';
 import { FiArrowRight, FiShoppingBag, FiBarChart2, FiHeart, FiTrendingUp, FiFeather } from 'react-icons/fi';
 import { Search, Package, Globe, Heart, Sprout, Star, Leaf, Sunrise, Trophy, Recycle, Utensils, Crown, Award } from 'lucide-react';
 
@@ -19,7 +21,6 @@ const BadgeIconMap = {
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import FoodCard from '../../components/shared/FoodCard';
 
-// eslint-disable-next-line no-unused-vars
 function StatCard({ label, value, sub, icon: Icon, color }) {
     return (
         <div className="card p-6">
@@ -28,7 +29,7 @@ function StatCard({ label, value, sub, icon: Icon, color }) {
                     <Icon className="w-6 h-6 text-white" />
                 </div>
             </div>
-            <p className="text-2xl font-bold text-[#064E3B]">{value}</p>
+            <p className="text-2xl font-bold text-[#064E3B]">{value ?? '—'}</p>
             <p className="text-sm font-semibold text-[#065F46] mt-0.5">{label}</p>
             {sub && <p className="text-xs text-[#065F46] mt-1 opacity-70">{sub}</p>}
         </div>
@@ -57,10 +58,36 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function DashboardPage() {
     const { user } = useAuth();
     const { cartCount } = useCart();
-    const recentOrders = mockOrders.slice(0, 3);
-    const nearbyFood = mockFoodItems.filter(f => f.distance <= 2).slice(0, 4);
-    const earnedBadges = user?.badges?.filter(b => b.earned) || [];
-    const chartData = mockImpactChartData.monthly.slice(-6);
+    const [dashboard, setDashboard] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let cancelled = false;
+        setLoading(true);
+        api.get('/consumer/dashboard')
+            .then(({ data }) => {
+                if (!cancelled) setDashboard(data);
+            })
+            .catch((err) => {
+                if (!cancelled) toast.error(err.response?.data?.error || 'Failed to load dashboard');
+            })
+            .finally(() => { if (!cancelled) setLoading(false); });
+        return () => { cancelled = true; };
+    }, []);
+
+    const stats = dashboard?.stats || {};
+    const recentOrders = dashboard?.recentOrders || [];
+    const nearbyListings = dashboard?.nearbyListings || [];
+    const badges = dashboard?.badges || [];
+    const chartData = dashboard?.chartData || [];
+    const earnedBadges = badges.filter(b => b.earned);
+
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <div className="w-10 h-10 border-4 border-[#059669] border-t-transparent rounded-full animate-spin" />
+            <p className="text-[#065F46] text-sm">Loading dashboard...</p>
+        </div>
+    );
 
     return (
         <div className="space-y-8">
@@ -72,7 +99,7 @@ export default function DashboardPage() {
                     <div>
                         <p className="text-white/80 text-sm">Good evening,</p>
                         <h1 className="text-2xl font-bold">{user?.name}! 👋</h1>
-                        <p className="text-white/80 text-sm mt-1">You've saved <strong className="text-white">{user?.impact?.foodSaved}kg</strong> of food. Keep going!</p>
+                        <p className="text-white/80 text-sm mt-1">You've saved <strong className="text-white">{stats.totalFoodSaved ?? 0}kg</strong> of food. Keep going!</p>
                     </div>
                     <div className="flex gap-3">
                         <Link to="/consumer/listings" className="bg-white text-[#059669] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-opacity-90 transition-all cursor-pointer">
@@ -89,10 +116,10 @@ export default function DashboardPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="Total Orders" value={user?.impact?.totalOrders} sub="All time" icon={FiShoppingBag} color="bg-gradient-to-br from-[#059669] to-[#10B981]" />
-                <StatCard label="Food Saved" value={`${user?.impact?.foodSaved}kg`} sub="Environmental impact" icon={FiFeather} color="bg-gradient-to-br from-[#0891B2] to-[#06b6d4]" />
-                <StatCard label="Money Saved" value={`₹${user?.impact?.moneySaved?.toLocaleString()}`} sub="vs. original prices" icon={FiTrendingUp} color="bg-gradient-to-br from-[#F59E0B] to-[#fbbf24]" />
-                <StatCard label="Impact Score" value={user?.impact?.impactScore?.toLocaleString()} sub={`Community rank #${user?.leaderboardRank}`} icon={FiBarChart2} color="bg-gradient-to-br from-[#8B5CF6] to-[#a78bfa]" />
+                <StatCard label="Total Orders" value={stats.totalOrders} sub="All time" icon={FiShoppingBag} color="bg-gradient-to-br from-[#059669] to-[#10B981]" />
+                <StatCard label="Food Saved" value={`${stats.totalFoodSaved ?? 0}kg`} sub="Environmental impact" icon={FiFeather} color="bg-gradient-to-br from-[#0891B2] to-[#06b6d4]" />
+                <StatCard label="Money Saved" value={`₹${(stats.totalMoneySaved || 0).toLocaleString('en-IN')}`} sub="vs. original prices" icon={FiTrendingUp} color="bg-gradient-to-br from-[#F59E0B] to-[#fbbf24]" />
+                <StatCard label="Impact Score" value={(stats.impactScore || 0).toLocaleString('en-IN')} sub={`Community rank #${stats.leaderboardRank || '—'}`} icon={FiBarChart2} color="bg-gradient-to-br from-[#8B5CF6] to-[#a78bfa]" />
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
@@ -105,8 +132,17 @@ export default function DashboardPage() {
                         </Link>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
-                        {nearbyFood.map(food => (
-                            <FoodCard key={food.id} food={food} />
+                        {nearbyListings.map(food => (
+                            <FoodCard key={food.id} food={{
+                                ...food,
+                                images: food.images?.length ? food.images : (food.images ? [food.images] : ['https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80']),
+                                restaurantId: food.restaurantName,
+                                status: 'active',
+                                pickupSlots: ['Available for pickup'],
+                                pickup: true,
+                                delivery: false,
+                                dietary: { veg: true, vegan: false, glutenFree: true, dairyFree: false },
+                            }} />
                         ))}
                     </div>
                 </div>
@@ -123,13 +159,15 @@ export default function DashboardPage() {
                         </div>
                         <div className="space-y-3">
                             {recentOrders.map(order => (
-                                <Link key={order.id} to={`/consumer/order/${order.id}`} className="card-flat p-4 flex items-center gap-3 hover:border-[#10B981] transition-colors cursor-pointer block">
-                                    <img src={order.restaurantLogo} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-[#064E3B] truncate">{order.restaurantName}</p>
-                                        <p className="text-xs text-[#065F46]">{new Date(order.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
+                                <Link key={order.id} to={`/consumer/orders`} className="card-flat p-4 flex items-center gap-3 hover:border-[#10B981] transition-colors cursor-pointer block">
+                                    <div className="w-10 h-10 rounded-xl bg-[#D1FAE5] flex items-center justify-center shrink-0 text-[#059669]">
+                                        <FiShoppingBag className="w-5 h-5" />
                                     </div>
-                                    <span className={`badge text-xs shrink-0 ${statusColors[order.status]}`}>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-semibold text-[#064E3B] truncate">Order #{order.id}</p>
+                                        <p className="text-xs text-[#065F46]">{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
+                                    </div>
+                                    <span className={`badge text-xs shrink-0 ${statusColors[order.status] || 'bg-gray-100 text-gray-600'}`}>
                                         {order.status}
                                     </span>
                                 </Link>
@@ -149,7 +187,7 @@ export default function DashboardPage() {
                             {earnedBadges.map(badge => {
                                 const BadgeIcon = BadgeIconMap[badge.icon] || Award;
                                 return (
-                                    <div key={badge.id} className="bg-[#F0FDF4] rounded-2xl p-2 text-center group cursor-pointer relative hover:bg-[#D1FAE5] transition-colors">
+                                    <div key={badge.id} className="card p-2 text-center group cursor-pointer relative hover:bg-[#D1FAE5] transition-colors">
                                         <div className="flex justify-center text-[#059669] my-1"><BadgeIcon className="w-6 h-6" strokeWidth={1.5} /></div>
                                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-28 bg-[#064E3B] text-white text-xs rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center pointer-events-none shadow-lg">
                                             {badge.name}
@@ -194,7 +232,6 @@ export default function DashboardPage() {
                         { to: '/consumer/impact', icon: Globe, label: 'My Impact' },
                         { to: '/consumer/favorites', icon: Heart, label: 'Favorites' },
                     ].map(({ to, icon: Icon, label }) => (
-                        // eslint-disable-next-line no-unused-vars
                         <Link key={to} to={to} className="card p-5 flex flex-col items-center gap-2 text-center cursor-pointer hover:bg-[#F0FDF4] group">
                             <span className="text-[#059669] group-hover:scale-110 transition-transform"><Icon className="w-8 h-8" strokeWidth={1.5} /></span>
                             <span className="text-sm font-semibold text-[#064E3B]">{label}</span>
@@ -202,8 +239,6 @@ export default function DashboardPage() {
                     ))}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
-
-

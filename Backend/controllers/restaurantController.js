@@ -108,13 +108,49 @@ export async function createListing(req, res) {
     res.status(201).json({ listing, message: "Listing created successfully" });
 }
 
-// GET /api/restaurant/listings  - Get all listings for current restaurant
+// GET /api/restaurant/listings  - Get all listings for current restaurant (supports ?search=&status= query params)
 export async function getListings(req, res) {
+    const { search, status } = req.query;
+    const where = { restaurantId: req.user.id };
+    if (status && status !== 'All') where.status = status.toLowerCase();
+    if (search) where.name = { contains: search, mode: 'insensitive' };
+
     const listings = await prisma.foodListing.findMany({
-        where: { restaurantId: req.user.id },
+        where,
         orderBy: { createdAt: "desc" }
     });
     res.json({ listings });
+}
+
+// GET /api/restaurant/stats  - Listing counts by status for dashboard
+export async function getStats(req, res) {
+    const [total, active, draft] = await Promise.all([
+        prisma.foodListing.count({ where: { restaurantId: req.user.id } }),
+        prisma.foodListing.count({ where: { restaurantId: req.user.id, status: 'active' } }),
+        prisma.foodListing.count({ where: { restaurantId: req.user.id, status: 'draft' } }),
+    ]);
+    res.json({ total, active, draft, expired: total - active - draft });
+}
+
+// GET /api/restaurant/listings/export  - Download listings as CSV
+export async function exportListingsCSV(req, res) {
+    const listings = await prisma.foodListing.findMany({
+        where: { restaurantId: req.user.id },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    const headers = ['ID','Name','Category','Sub-Category','Status','Quantity','Unit','Original Price','Discounted Price','Expiry Date','Expiry Time','Pickup','Delivery','Created At'];
+    const rows = listings.map(l => [
+        l.id, l.name, l.category, l.subCategory || '',
+        l.status, l.quantity, l.unit, l.originalPrice, l.discountedPrice,
+        l.expiryDate, l.expiryTime, l.pickup, l.delivery,
+        l.createdAt.toISOString()
+    ]);
+
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="listings.csv"');
+    res.send(csv);
 }
 
 // PATCH /api/restaurant/listings/:id  - Update a listing

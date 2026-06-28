@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id            Int       @id @default(autoincrement())
-  name          String                          // owner/contact name
+  name          String
   email         String    @unique
   phone         String?
   password      String
@@ -18,7 +18,7 @@ model User {
   // Restaurant-specific
   businessName  String?
   cuisineType   String?
-  businessImage String?   // URL/path to uploaded business image
+  businessImage String?
 
   // NGO-specific
   ngoRegNumber  String?
@@ -30,6 +30,23 @@ model User {
   state         String?
   pincode       String?
 
+
+
+  // Consumer profile extras
+  avatar        String?   // uploaded photo URL
+  bio           String?
+
+  // Notification preferences (consumer)
+  notifEmailOrders    Boolean @default(true)
+  notifEmailListings  Boolean @default(true)
+  notifEmailDigest    Boolean @default(false)
+  notifSmsOrders      Boolean @default(true)
+  notifSmsListings    Boolean @default(false)
+
+  // Privacy preferences (consumer)
+  privacyShowLeaderboard Boolean @default(true)
+  privacyPublicProfile   Boolean @default(true)
+
   // Auth internals
   resetOtp      String?
   otpExpiry     DateTime?
@@ -37,6 +54,34 @@ model User {
 
   // Relations
   listings      FoodListing[]
+  orders        Order[]
+  favorites     Favorite[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  consumerId  Int
+  consumer    User        @relation(fields: [consumerId], references: [id])
+  notes       String?
+  status      String      @default("pending") // pending | confirmed | ready | completed | cancelled
+  foodSaved   Float       @default(0)
+  co2Saved    Float       @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id          Int         @id @default(autoincrement())
+  orderId     Int
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listingId   Int
+  listing     FoodListing @relation(fields: [listingId], references: [id])
+  quantity    Float
+  pickupSlot  String?
+  name        String      // snapshot
+  image       String?     // snapshot
+  restaurantName String?  // snapshot
 }
 
 model FoodListing {
@@ -53,6 +98,9 @@ model FoodListing {
 
   // Images (JSON array of URLs)
   images          String    @default("[]")
+
+  // Location for proximity
+  city            String?   // for nearby matching
 
   // Quantity & Pricing
   quantity        Float
@@ -85,4 +133,18 @@ model FoodListing {
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  orderItems      OrderItem[]
+  favorites       Favorite[]
+}
+
+model Favorite {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId Int
+  listing   FoodListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, listingId])
 }
