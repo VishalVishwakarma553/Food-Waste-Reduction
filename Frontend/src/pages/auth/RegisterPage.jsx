@@ -131,7 +131,13 @@ export default function RegisterPage() {
         };
         try {
             await register(payload);
-            navigate(data.role === 'restaurant' ? '/restaurant/dashboard' : '/consumer/dashboard');
+            if (data.role === 'restaurant') {
+                navigate('/restaurant/dashboard');
+            } else if (data.role === 'ngo') {
+                navigate('/ngo/dashboard');
+            } else {
+                navigate('/consumer/dashboard');
+            }
         } catch (err) {
             setApiError(err.response?.data?.error || 'Registration failed. Please try again.');
         } finally {

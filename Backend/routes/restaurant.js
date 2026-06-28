@@ -11,7 +11,9 @@ import {
     updateListing,
     deleteListing,
     getStats,
-    exportListingsCSV
+    exportListingsCSV,
+    getRestaurantDashboard,
+    getRestaurantAnalytics
 } from "../controllers/restaurantController.js";
 import {
     getRestaurantOrders,
@@ -49,6 +51,12 @@ router.use(requireAuth, requireRole("restaurant"));
 
 // Profile
 router.get("/me", getProfile);
+
+// Dashboard
+router.get("/dashboard", getRestaurantDashboard);
+
+// Analytics
+router.get("/analytics", getRestaurantAnalytics);
 
 // Settings (with optional single image upload for business logo)
 router.patch("/settings", upload.single("businessImage"), updateSettings);

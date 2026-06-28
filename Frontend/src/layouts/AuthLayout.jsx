@@ -1,8 +1,20 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, Navigate } from 'react-router-dom';
 import { FiFeather } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
 
 
 export default function AuthLayout() {
+    const { isAuthenticated, user } = useAuth();
+
+    if (isAuthenticated) {
+        if (user?.role === 'restaurant') {
+            return <Navigate to="/restaurant/dashboard" replace />;
+        }
+        if (user?.role === 'ngo') {
+            return <Navigate to="/ngo/dashboard" replace />;
+        }
+        return <Navigate to="/consumer/dashboard" replace />;
+    }
     return (
         <div className="min-h-screen bg-[#ECFDF5] flex">
             {/* Left Panel – Branding */}
