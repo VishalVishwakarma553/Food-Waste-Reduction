@@ -9,6 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SAFE_SELECT = {
     id: true, name: true, email: true, phone: true, role: true,
     avatar: true, bio: true, address: true, city: true, state: true, pincode: true,
+    latitude: true, longitude: true,
     notifEmailOrders: true, notifEmailListings: true, notifEmailDigest: true,
     notifSmsOrders: true, notifSmsListings: true,
     privacyShowLeaderboard: true, privacyPublicProfile: true,
@@ -27,7 +28,7 @@ export async function getProfile(req, res) {
 
 // PATCH /api/consumer/profile  – update name/phone/bio/address fields
 export async function updateProfile(req, res) {
-    const { name, phone, bio, address, city, state, pincode } = req.body;
+    const { name, phone, bio, address, city, state, pincode, latitude, longitude } = req.body;
     const data = {};
     if (name !== undefined) data.name = name;
     if (phone !== undefined) data.phone = phone;
@@ -36,6 +37,8 @@ export async function updateProfile(req, res) {
     if (city !== undefined) data.city = city;
     if (state !== undefined) data.state = state;
     if (pincode !== undefined) data.pincode = pincode;
+    if (latitude !== undefined) data.latitude = latitude ? parseFloat(latitude) : null;
+    if (longitude !== undefined) data.longitude = longitude ? parseFloat(longitude) : null;
 
     // If avatar image was uploaded
     if (req.file) {

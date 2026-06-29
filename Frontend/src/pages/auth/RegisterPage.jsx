@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiArrowLeft, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import LocationPicker from '../../components/shared/LocationPicker';
 
 const roles = [
     { id: 'consumer', label: 'Consumer', icon: '🛒', desc: 'Browse and claim surplus food at discounted prices' },
@@ -53,6 +54,7 @@ export default function RegisterPage() {
         ngoRegNumber: '', contactPerson: '',
         // Location
         address: '', city: '', state: '', pincode: '',
+        latitude: null, longitude: null,
         // T&C
         accepted: false,
     });
@@ -115,6 +117,8 @@ export default function RegisterPage() {
             city:          data.city,
             state:         data.state,
             pincode:       data.pincode,
+            latitude:      data.latitude,
+            longitude:     data.longitude,
             // Human contact name stored in `name` column
             name:          isRestaurant ? data.name          // owner name
                          : isNgo        ? data.contactPerson // contact person
@@ -321,6 +325,23 @@ export default function RegisterPage() {
                              data.role === 'ngo' ? 'Organisation Location' : 'Your Location'}
                         </p>
                     </div>
+
+                    <LocationPicker
+                        initialLat={data.latitude}
+                        initialLng={data.longitude}
+                        onLocationChange={({ latitude, longitude, address, city, state, pincode }) => {
+                            setData(prev => ({
+                                ...prev,
+                                latitude,
+                                longitude,
+                                address: address || prev.address,
+                                city: city || prev.city,
+                                state: state || prev.state,
+                                pincode: pincode || prev.pincode
+                            }));
+                        }}
+                    />
+
                     <Field label="Street Address" error={errors.address}>
                         <textarea value={data.address} onChange={e => update('address', e.target.value)}
                             className={`input-field resize-none h-20 ${errors.address ? 'error' : ''}`}

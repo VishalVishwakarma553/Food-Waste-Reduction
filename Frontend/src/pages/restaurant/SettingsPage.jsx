@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { FiSave, FiMapPin, FiClock, FiCamera, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import LocationPicker from '../../components/shared/LocationPicker';
 
 const API_BASE = 'http://localhost:8080';
 
@@ -35,6 +36,8 @@ export default function SettingsPage() {
         pincode: user?.pincode || '',
         businessName: user?.businessName || '',
         cuisineType: user?.cuisineType || '',
+        latitude: user?.latitude || null,
+        longitude: user?.longitude || null,
         description: '',
     });
 
@@ -77,6 +80,8 @@ export default function SettingsPage() {
             fd.append('pincode', profile.pincode);
             fd.append('businessName', profile.businessName);
             fd.append('cuisineType', profile.cuisineType);
+            if (profile.latitude) fd.append('latitude', profile.latitude);
+            if (profile.longitude) fd.append('longitude', profile.longitude);
             if (imageFile) fd.append('businessImage', imageFile);
 
             await saveSettings(fd);
@@ -210,6 +215,25 @@ export default function SettingsPage() {
                                 className="input-field"
                             />
                         </div>
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Pinpoint Business Location</label>
+                        <LocationPicker
+                            initialLat={profile.latitude}
+                            initialLng={profile.longitude}
+                            onLocationChange={({ latitude, longitude, address, city, state, pincode }) => {
+                                setProfile(prev => ({
+                                    ...prev,
+                                    latitude,
+                                    longitude,
+                                    address: address || prev.address,
+                                    city: city || prev.city,
+                                    state: state || prev.state,
+                                    pincode: pincode || prev.pincode
+                                }));
+                            }}
+                        />
                     </div>
 
                     <div>

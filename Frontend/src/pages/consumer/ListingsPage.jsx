@@ -39,6 +39,25 @@ export default function ListingsPage() {
     const [categories, setCategories] = useState(STATIC_CATEGORIES);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userCoords, setUserCoords] = useState(null);
+
+    // Request browser coordinates on mount
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    setUserCoords({
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude
+                    });
+                },
+                (err) => {
+                    console.warn("Could not retrieve GPS coordinates:", err.message);
+                },
+                { enableHighAccuracy: false, timeout: 4000 }
+            );
+        }
+    }, []);
 
     // Debounce search 400ms
     useEffect(() => {
@@ -68,7 +87,11 @@ export default function ListingsPage() {
             if (maxPrice < 1000) params.maxPrice = maxPrice;
             if (pickupOnly) params.pickup = 'true';
             if (deliveryOnly) params.delivery = 'true';
-            if (sort !== 'distance' && sort !== 'recommended') params.sort = sort; // distance/recommended: client-side (no location data)
+            if (sort !== 'recommended') params.sort = sort;
+            if (userCoords) {
+                params.lat = userCoords.lat;
+                params.lng = userCoords.lng;
+            }
             params.limit = 60;
 
             const { data } = await api.get('/public/listings', { params });
@@ -91,7 +114,7 @@ export default function ListingsPage() {
         } finally {
             setLoading(false);
         }
-    }, [debouncedSearch, selectedCategory, selectedDietary, maxPrice, maxDistance, pickupOnly, deliveryOnly, sort, showFavoritesOnly, favorites]);
+    }, [debouncedSearch, selectedCategory, selectedDietary, maxPrice, maxDistance, pickupOnly, deliveryOnly, sort, showFavoritesOnly, favorites, userCoords]);
 
     useEffect(() => { fetchListings(); }, [fetchListings]);
 

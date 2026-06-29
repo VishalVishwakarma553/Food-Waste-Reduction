@@ -3,6 +3,7 @@ import { FiEdit2, FiCamera, FiSave, FiLock, FiBell, FiTrash2, FiCheckCircle, FiX
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
+import LocationPicker from '../../components/shared/LocationPicker';
 
 const API_BASE = 'http://localhost:8080';
 const tabs = ['Profile', 'Security', 'Notifications', 'Privacy'];
@@ -60,6 +61,8 @@ export default function ProfilePage() {
                     city: r.data.user.city || '',
                     state: r.data.user.state || '',
                     pincode: r.data.user.pincode || '',
+                    latitude: r.data.user.latitude || null,
+                    longitude: r.data.user.longitude || null,
                 });
             })
             .catch(() => toast.error('Failed to load profile'))
@@ -81,7 +84,7 @@ export default function ProfilePage() {
         setSaving(true);
         try {
             const fd = new FormData();
-            ['name', 'phone', 'bio', 'address', 'city', 'state', 'pincode'].forEach(k => {
+            ['name', 'phone', 'bio', 'address', 'city', 'state', 'pincode', 'latitude', 'longitude'].forEach(k => {
                 if (form[k] !== undefined) fd.append(k, form[k]);
             });
             if (avatarFile) fd.append('avatar', avatarFile);
@@ -116,6 +119,8 @@ export default function ProfilePage() {
             city: profile.city || '',
             state: profile.state || '',
             pincode: profile.pincode || '',
+            latitude: profile.latitude || null,
+            longitude: profile.longitude || null,
         });
     };
 
@@ -294,6 +299,26 @@ export default function ProfilePage() {
                             />
                         </div>
                     ))}
+                    {editing && (
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-semibold text-[#064E3B] mb-2">Update Location Map Pin</label>
+                            <LocationPicker
+                                initialLat={form.latitude}
+                                initialLng={form.longitude}
+                                onLocationChange={({ latitude, longitude, address, city, state, pincode }) => {
+                                    setForm(prev => ({
+                                        ...prev,
+                                        latitude,
+                                        longitude,
+                                        address: address || prev.address,
+                                        city: city || prev.city,
+                                        state: state || prev.state,
+                                        pincode: pincode || prev.pincode
+                                    }));
+                                }}
+                            />
+                        </div>
+                    )}
                     <div className="md:col-span-2">
                         <label className="block text-sm font-semibold text-[#064E3B] mb-1.5">Address</label>
                         <textarea

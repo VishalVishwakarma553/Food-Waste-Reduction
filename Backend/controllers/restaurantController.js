@@ -21,7 +21,8 @@ export async function getProfile(req, res) {
 
 // PATCH /api/restaurant/settings  - Update restaurant settings
 export async function updateSettings(req, res) {
-    const { name, phone, address, city, state, pincode, businessName, cuisineType, description } = req.body;
+    const { name, phone, address, city, state, pincode, businessName, cuisineType, description,
+            latitude, longitude } = req.body;
 
     const updateData = {};
     if (name !== undefined) updateData.name = name;
@@ -32,6 +33,8 @@ export async function updateSettings(req, res) {
     if (pincode !== undefined) updateData.pincode = pincode;
     if (businessName !== undefined) updateData.businessName = businessName;
     if (cuisineType !== undefined) updateData.cuisineType = cuisineType;
+    if (latitude !== undefined) updateData.latitude = latitude ? parseFloat(latitude) : null;
+    if (longitude !== undefined) updateData.longitude = longitude ? parseFloat(longitude) : null;
     // description stored as cuisineType for now (can be added as a field later)
 
     // If a file was uploaded, set its URL
@@ -46,7 +49,7 @@ export async function updateSettings(req, res) {
             id: true, name: true, email: true, phone: true,
             role: true, businessName: true, cuisineType: true,
             businessImage: true, address: true, city: true,
-            state: true, pincode: true, createdAt: true,
+            state: true, pincode: true, latitude: true, longitude: true, createdAt: true,
         }
     });
 

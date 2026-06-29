@@ -9,6 +9,7 @@ const sign = (user) => jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { 
 export async function register(req, res) {
     const { name, email, phone, password, role,
             address, city, state, pincode,
+            latitude, longitude,
             businessName, cuisineType, ngoRegNumber, contactPerson } = req.body;
     if (!name || !email || !password || !role) return res.status(400).json({ error: "Missing required fields" });
 
@@ -19,6 +20,8 @@ export async function register(req, res) {
     const user = await prisma.user.create({
         data: { name, email, phone, password: hashed, role,
                 address, city, state, pincode,
+                latitude: latitude ? parseFloat(latitude) : null,
+                longitude: longitude ? parseFloat(longitude) : null,
                 businessName, cuisineType, ngoRegNumber, contactPerson },
     });
 

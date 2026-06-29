@@ -30,6 +30,12 @@ model User {
   state         String?
   pincode       String?
 
+  // Coordinates — set via geocoding, drive PostGIS proximity queries
+  latitude      Float?
+  longitude     Float?
+  // PostGIS geography column — managed by migration trigger (not usable via Prisma client directly)
+  coords        Unsupported("geography(Point, 4326)")?
+
 
 
   // Consumer profile extras

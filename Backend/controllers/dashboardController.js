@@ -4,8 +4,11 @@ import prisma from "../lib/prisma.js";
 export async function getDashboard(req, res) {
     try {
         const userId = req.user.id;
+        // Optional browser-provided coords override the stored profile coords
+        const queryLat = req.query.lat ? parseFloat(req.query.lat) : null;
+        const queryLng = req.query.lng ? parseFloat(req.query.lng) : null;
 
-        const [orders, , listRows] = await Promise.all([
+        const [orders, currentUser, listRows] = await Promise.all([
             prisma.order.findMany({
                 where: { consumerId: userId },
                 include: {
@@ -25,18 +28,21 @@ export async function getDashboard(req, res) {
             }),
             prisma.user.findUnique({
                 where: { id: userId },
-                select: { city: true },
+                select: { latitude: true, longitude: true },
             }),
+            // Fallback list (used if no coords available)
             prisma.foodListing.findMany({
                 where: { status: "active" },
                 select: {
                     id: true, name: true, category: true,
                     originalPrice: true, discountedPrice: true,
                     images: true, status: true, restaurantId: true,
+                    expiryDate: true, expiryTime: true,
                     createdAt: true,
                     restaurant: {
                         select: {
                             businessName: true, name: true, city: true,
+                            businessImage: true, address: true,
                         },
                     },
                 },
@@ -73,47 +79,133 @@ export async function getDashboard(req, res) {
             restaurantName: o.items[0]?.listing?.name || "Restaurant",
         }));
 
-        // Nearby listings - complete with all FoodCard fields
+        // Nearby listings — PostGIS if we have coordinates, fallback otherwise
         const API_BASE = process.env.API_BASE || "http://localhost:8080";
+        const userLat = queryLat ?? currentUser?.latitude;
+        const userLng = queryLng ?? currentUser?.longitude;
 
-        const nearbyListings = listRows.map((l) => {
-            const imgs = (() => {
-                try { return JSON.parse(l.images || "[]"); }
-                catch { return []; }
-            })();
-            const safeImgs = imgs.length ? imgs.map(p => `${API_BASE}${p}`) : ["https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80"];
+        let nearbyListings;
 
-            const discount = l.originalPrice > 0
-                ? Math.round(((l.originalPrice - l.discountedPrice) / l.originalPrice) * 100)
-                : 0;
+        if (userLat && userLng) {
+            // PostGIS proximity — 20 km radius, sorted by distance
+            try {
+                const rows = await prisma.$queryRawUnsafe(`
+                    SELECT
+                        l.id::int,
+                        l."restaurantId"::int,
+                        l.name,
+                        l.category,
+                        l."subCategory",
+                        l."originalPrice"::float,
+                        l."discountedPrice"::float,
+                        l.images,
+                        l.status,
+                        l."expiryDate",
+                        l."expiryTime",
+                        l."createdAt",
+                        l.pickup,
+                        l.delivery,
+                        l.dietary,
+                        l.allergens,
+                        r."businessName"  AS "restaurantBusinessName",
+                        r."name"          AS "restaurantPersonName",
+                        r."businessImage" AS "restaurantBusinessImage",
+                        r.city            AS "restaurantCity",
+                        r.address         AS "restaurantAddress",
+                        ROUND(
+                            (ST_Distance(
+                                r.coords,
+                                ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+                            ) / 1000.0)::numeric, 2
+                        )::float AS distance
+                    FROM "FoodListing" l
+                    JOIN "User" r ON l."restaurantId" = r.id
+                    WHERE l.status = 'active'
+                      AND r.coords IS NOT NULL
+                      AND ST_DWithin(
+                            r.coords,
+                            ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+                            20000
+                      )
+                    ORDER BY distance ASC
+                    LIMIT 20
+                `, userLng, userLat);
 
-            const expiresAt = l.expiryDate && l.expiryTime
-                ? new Date(`${l.expiryDate}T${l.expiryTime}:00`).toISOString()
-                : null;
+                nearbyListings = rows.map((row) => {
+                    const imgs = (() => {
+                        try { return JSON.parse(row.images || "[]"); } catch { return []; }
+                    })();
+                    const safeImgs = imgs.length ? imgs.map(p => `${API_BASE}${p}`) : ["https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80"];
+                    const discount = parseFloat(row.originalPrice) > 0
+                        ? Math.round(((parseFloat(row.originalPrice) - parseFloat(row.discountedPrice)) / parseFloat(row.originalPrice)) * 100)
+                        : 0;
+                    return {
+                        id: String(row.id),
+                        restaurantId: String(row.restaurantId),
+                        name: row.name,
+                        category: row.category,
+                        subCategory: row.subCategory,
+                        originalPrice: parseFloat(row.originalPrice),
+                        discountedPrice: parseFloat(row.discountedPrice),
+                        images: safeImgs,
+                        status: row.status,
+                        discount,
+                        expiryDate: row.expiryDate,
+                        expiryTime: row.expiryTime,
+                        expiresAt: row.expiryDate && row.expiryTime
+                            ? new Date(`${row.expiryDate}T${row.expiryTime}:00`).toISOString()
+                            : null,
+                        restaurantName: row.restaurantBusinessName || row.restaurantPersonName || "Restaurant",
+                        restaurantLogo: row.restaurantBusinessImage ? `${API_BASE}${row.restaurantBusinessImage}` : null,
+                        restaurantCity: row.restaurantCity || null,
+                        restaurantAddress: row.restaurantAddress || null,
+                        pickupSlots: ["Available for pickup"],
+                        pickup: row.pickup,
+                        delivery: row.delivery,
+                        dietary: { veg: true, vegan: false, glutenFree: false, dairyFree: false },
+                        distance: row.distance != null ? Math.round(parseFloat(row.distance) * 10) / 10 : null,
+                        rating: 0, totalReviews: 0, isFeatured: false,
+                        createdAt: row.createdAt,
+                    };
+                });
+            } catch (postgisErr) {
+                console.error("PostGIS dashboard query failed, using fallback:", postgisErr);
+                nearbyListings = null; // fall through to Prisma fallback below
+            }
+        }
 
-            return {
-                ...l, // carry all DB fields through
-                id: String(l.id),
-                restaurantId: String(l.restaurantId),
-                images: safeImgs,
-                discount,
-                expiresAt,
-                expiryDate: l.expiryDate,
-                expiryTime: l.expiryTime,
-                restaurantName: l.restaurant.businessName || l.restaurant.name || "Restaurant",
-                restaurantLogo: l.restaurant.businessImage ? `${API_BASE}${l.restaurant.businessImage}` : null,
-                restaurantCity: l.restaurant.city || null,
-                restaurantAddress: l.restaurant.address || null,
-                pickupSlots: ["Available for pickup"],
-                pickup: true,
-                delivery: false,
-                dietary: { veg: true, vegan: false, glutenFree: true, dairyFree: false },
-                distance: null,
-                rating: 0,
-                totalReviews: 0,
-                isFeatured: false,
-            };
-        });
+        // Prisma fallback — latest listings, no real distance
+        if (!nearbyListings) {
+            nearbyListings = listRows.map((l) => {
+                const imgs = (() => {
+                    try { return JSON.parse(l.images || "[]"); } catch { return []; }
+                })();
+                const safeImgs = imgs.length ? imgs.map(p => `${API_BASE}${p}`) : ["https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80"];
+                const discount = l.originalPrice > 0
+                    ? Math.round(((l.originalPrice - l.discountedPrice) / l.originalPrice) * 100)
+                    : 0;
+                return {
+                    ...l,
+                    id: String(l.id),
+                    restaurantId: String(l.restaurantId),
+                    images: safeImgs,
+                    discount,
+                    expiresAt: l.expiryDate && l.expiryTime
+                        ? new Date(`${l.expiryDate}T${l.expiryTime}:00`).toISOString()
+                        : null,
+                    restaurantName: l.restaurant.businessName || l.restaurant.name || "Restaurant",
+                    restaurantLogo: l.restaurant.businessImage ? `${API_BASE}${l.restaurant.businessImage}` : null,
+                    restaurantCity: l.restaurant.city || null,
+                    restaurantAddress: l.restaurant.address || null,
+                    pickupSlots: ["Available for pickup"],
+                    pickup: true,
+                    delivery: false,
+                    dietary: { veg: true, vegan: false, glutenFree: true, dairyFree: false },
+                    distance: null,
+                    rating: 0, totalReviews: 0, isFeatured: false,
+                };
+            });
+        }
 
         // Functional badges
         const badges = [

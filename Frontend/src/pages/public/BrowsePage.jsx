@@ -34,6 +34,25 @@ export default function BrowsePage() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userCoords, setUserCoords] = useState(null);
+
+    // Request browser coordinates on mount
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    setUserCoords({
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude
+                    });
+                },
+                (err) => {
+                    console.warn("Could not retrieve GPS coordinates:", err.message);
+                },
+                { enableHighAccuracy: false, timeout: 4000 }
+            );
+        }
+    }, []);
 
     // Debounce search 400ms
     useEffect(() => {
@@ -62,7 +81,11 @@ export default function BrowsePage() {
             if (selectedCategory !== 'All') params.category = selectedCategory;
             if (selectedDietary.length) params.dietary = selectedDietary.map(d => d.toLowerCase()).join(',');
             if (maxPrice < 1000) params.maxPrice = maxPrice;
-            if (sort !== 'distance') params.sort = sort;
+            params.sort = sort;
+            if (userCoords) {
+                params.lat = userCoords.lat;
+                params.lng = userCoords.lng;
+            }
             params.limit = 60;
 
             const { data } = await api.get('/public/listings', { params });
@@ -81,7 +104,7 @@ export default function BrowsePage() {
         } finally {
             setLoading(false);
         }
-    }, [debouncedSearch, selectedCategory, selectedDietary, maxPrice, maxDistance, sort]);
+    }, [debouncedSearch, selectedCategory, selectedDietary, maxPrice, maxDistance, sort, userCoords]);
 
     useEffect(() => {
         fetchListings();
