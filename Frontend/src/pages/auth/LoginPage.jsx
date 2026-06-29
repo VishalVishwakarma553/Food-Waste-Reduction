@@ -21,6 +21,8 @@ export default function LoginPage() {
 
             if (loggedInUser.role === 'restaurant') {
                 navigate('/restaurant/dashboard');
+            } else if (loggedInUser.role === 'ngo') {
+                navigate('/ngo/dashboard');
             } else {
                 navigate('/consumer/dashboard');
             }

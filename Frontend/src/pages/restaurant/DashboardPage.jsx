@@ -9,33 +9,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from 'react';
 import api from '../../lib/api';
+import toast from 'react-hot-toast';
 
 const API_BASE = 'http://localhost:8080';
-
-// Dummy Data
-const impactData = [
-    { name: 'Mon', mealsProvided: 40, orders: 24 },
-    { name: 'Tue', mealsProvided: 30, orders: 18 },
-    { name: 'Wed', mealsProvided: 50, orders: 32 },
-    { name: 'Thu', mealsProvided: 45, orders: 28 },
-    { name: 'Fri', mealsProvided: 60, orders: 45 },
-    { name: 'Sat', mealsProvided: 80, orders: 60 },
-    { name: 'Sun', mealsProvided: 75, orders: 55 },
-];
-
-const recentOrders = [
-    { id: 'ORD-1042', customer: 'Rahul K.', items: 3, time: '10:45 AM', pickup: '11:30 AM', status: 'Pending', weight: '1.5 kg' },
-    { id: 'ORD-1041', customer: 'Sneha P.', items: 1, time: '10:15 AM', pickup: '11:00 AM', status: 'Ready', weight: '0.4 kg' },
-    { id: 'ORD-1040', customer: 'Amit T.', items: 5, time: '09:30 AM', pickup: '10:15 AM', status: 'Completed', weight: '2.5 kg' },
-    { id: 'ORD-1039', customer: 'Priya R.', items: 2, time: '09:00 AM', pickup: '09:45 AM', status: 'Completed', weight: '1.0 kg' },
-];
-
-const alerts = [
-    { id: 1, type: 'warning', text: '3 items expiring in less than 2 hours', link: '/restaurant/listings' },
-    { id: 2, type: 'info', text: 'New review: 5 stars from Rahul K.', link: '#' },
-    { id: 3, type: 'success', text: 'You hit a new milestone: 500 meals provided!', link: '#' },
-];
-
 
 export default function DashboardPage() {
     const { user } = useAuth();
@@ -44,10 +20,77 @@ export default function DashboardPage() {
         ? `${API_BASE}${user.businessImage}`
         : null;
 
-    const [stats, setStats] = useState({ total: 0, active: 0, draft: 0, expired: 0 });
+    const [loading, setLoading] = useState(true);
+    const [dashboardData, setDashboardData] = useState({
+        stats: { total: 0, active: 0, draft: 0, expired: 0 },
+        recentOrders: [],
+        chartData: { thisWeek: [], lastWeek: [], thisMonth: [] },
+        alerts: []
+    });
+    const [listings, setListings] = useState([]);
+    const [selectedPeriod, setSelectedPeriod] = useState('This Week');
+    const [updating, setUpdating] = useState(null);
+
+    const fetchDashboard = async () => {
+        try {
+            const [dashRes, listRes] = await Promise.all([
+                api.get('/restaurant/dashboard'),
+                api.get('/restaurant/listings')
+            ]);
+            setDashboardData(dashRes.data);
+            setListings(listRes.data.listings || []);
+        } catch (err) {
+            toast.error('Failed to load dashboard data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        api.get('/restaurant/stats').then(({ data }) => setStats(data)).catch(() => {});
+        fetchDashboard();
     }, []);
+
+    const updateStatus = async (orderId, newStatus) => {
+        setUpdating(orderId);
+        try {
+            await api.patch(`/restaurant/orders/${orderId}/status`, { status: newStatus });
+            toast.success(`Order marked as ${newStatus}`);
+            fetchDashboard();
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to update order status');
+        } finally {
+            setUpdating(null);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="w-10 h-10 border-4 border-[#059669] border-t-transparent rounded-full animate-spin mx-auto" />
+            </div>
+        );
+    }
+
+    const stats = dashboardData.stats;
+    const recentOrders = dashboardData.recentOrders;
+    const alerts = dashboardData.alerts;
+
+    const currentChartData = selectedPeriod === 'This Week'
+        ? dashboardData.chartData?.thisWeek
+        : selectedPeriod === 'Last Week'
+        ? dashboardData.chartData?.lastWeek
+        : dashboardData.chartData?.thisMonth || [];
+
+    // Group inventory listings by category
+    const categoriesSnapshot = Object.entries(
+        listings.reduce((acc, l) => {
+            const cat = l.category || 'Other';
+            if (!acc[cat]) acc[cat] = { active: 0, total: 0 };
+            acc[cat].total++;
+            if (l.status === 'active') acc[cat].active++;
+            return acc;
+        }, {})
+    ).slice(0, 3);
 
     return (
         <div className="space-y-6">
@@ -100,16 +143,20 @@ export default function DashboardPage() {
                     {/* Impact Chart */}
                     <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-[#111827]">Impact Overview (This Week)</h2>
-                            <select className="bg-gray-50 border border-gray-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#059669]">
-                                <option>This Week</option>
-                                <option>Last Week</option>
-                                <option>This Month</option>
+                            <h2 className="text-lg font-bold text-[#111827]">Impact Overview ({selectedPeriod})</h2>
+                            <select 
+                                value={selectedPeriod} 
+                                onChange={(e) => setSelectedPeriod(e.target.value)}
+                                className="bg-gray-50 border border-gray-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                            >
+                                <option value="This Week">This Week</option>
+                                <option value="Last Week">Last Week</option>
+                                <option value="This Month">This Month</option>
                             </select>
                         </div>
                         <div className="h-72">
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={impactData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <AreaChart data={currentChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorImpact" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#059669" stopOpacity={0.3} />
@@ -151,44 +198,60 @@ export default function DashboardPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 text-sm">
-                                    {recentOrders.map((order) => (
-                                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-gray-900">{order.id}</td>
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <p className="font-medium text-gray-900">{order.customer}</p>
-                                                    <p className="text-xs text-gray-500">{order.items} {order.items === 1 ? 'item' : 'items'}</p>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-600">
-                                                <div className="flex flex-col gap-1">
-                                                    <span className="flex items-center gap-1 text-xs"><FiClock className="w-3 h-3" /> {order.time}</span>
-                                                    <span className="flex items-center gap-1 text-xs font-medium text-[#059669]">Pickup: {order.pickup}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 font-semibold text-gray-900">{order.weight}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${order.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                    order.status === 'Ready' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                                        'bg-amber-50 text-amber-700 border-amber-200'
-                                                    }`}>
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                {order.status === 'Pending' && (
-                                                    <button className="text-xs font-medium text-white bg-[#059669] px-3 py-1.5 rounded-lg hover:bg-[#047857] transition-colors">
-                                                        Mark Ready
-                                                    </button>
-                                                )}
-                                                {order.status === 'Ready' && (
-                                                    <button className="text-xs font-medium text-white bg-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors">
-                                                        Complete
-                                                    </button>
-                                                )}
+                                    {recentOrders.length > 0 ? (
+                                        recentOrders.map((order) => (
+                                            <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
+                                                <td className="px-6 py-4 font-medium text-gray-900">{order.id}</td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <p className="font-medium text-gray-900">{order.customer}</p>
+                                                        <p className="text-xs text-gray-500">{order.items} {order.items === 1 ? 'item' : 'items'}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-600">
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="flex items-center gap-1 text-xs"><FiClock className="w-3 h-3" /> {order.time}</span>
+                                                        <span className="flex items-center gap-1 text-xs font-medium text-[#059669]">Pickup: {order.pickup}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 font-semibold text-gray-900">{order.weight}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${order.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                        order.status === 'Ready' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                                            'bg-amber-50 text-amber-700 border-amber-200'
+                                                        }`}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    {order.status === 'Pending' && (
+                                                        <button 
+                                                            disabled={updating === order.dbId}
+                                                            onClick={() => updateStatus(order.dbId, 'ready')}
+                                                            className="text-xs font-medium text-white bg-[#059669] px-3 py-1.5 rounded-lg hover:bg-[#047857] transition-colors disabled:opacity-50"
+                                                        >
+                                                            {updating === order.dbId ? '...' : 'Mark Ready'}
+                                                        </button>
+                                                    )}
+                                                    {order.status === 'Ready' && (
+                                                        <button 
+                                                            disabled={updating === order.dbId}
+                                                            onClick={() => updateStatus(order.dbId, 'completed')}
+                                                            className="text-xs font-medium text-white bg-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {updating === order.dbId ? '...' : 'Complete'}
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                                                No recent orders found.
                                             </td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -206,15 +269,19 @@ export default function DashboardPage() {
                             </button>
                         </div>
                         <div className="space-y-3">
-                            {alerts.map(alert => (
-                                <Link to={alert.link} key={alert.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
-                                    <div className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${alert.type === 'warning' ? 'bg-amber-500' :
-                                        alert.type === 'info' ? 'bg-blue-500' :
-                                            'bg-green-500'
-                                        }`} />
-                                    <p className="text-sm text-gray-700">{alert.text}</p>
-                                </Link>
-                            ))}
+                            {alerts.length > 0 ? (
+                                alerts.map(alert => (
+                                    <Link to={alert.link} key={alert.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
+                                        <div className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${alert.type === 'warning' ? 'bg-amber-500' :
+                                            alert.type === 'info' ? 'bg-blue-500' :
+                                                'bg-green-500'
+                                            }`} />
+                                        <p className="text-sm text-gray-700">{alert.text}</p>
+                                    </Link>
+                                ))
+                            ) : (
+                                <p className="text-sm text-gray-500 py-2">No active alerts.</p>
+                            )}
                         </div>
                     </div>
 
@@ -236,33 +303,25 @@ export default function DashboardPage() {
                             <Link to="/restaurant/listings" className="text-sm text-[#059669] hover:underline">View All</Link>
                         </div>
                         <div className="space-y-4">
-                            <div>
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-gray-600">Bakery Items</span>
-                                    <span className="font-medium text-gray-900">12/15</span>
-                                </div>
-                                <div className="w-full bg-gray-100 rounded-full h-2">
-                                    <div className="bg-[#059669] h-2 rounded-full" style={{ width: '80%' }}></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-gray-600">Prepared Meals</span>
-                                    <span className="font-medium text-gray-900">3/10</span>
-                                </div>
-                                <div className="w-full bg-gray-100 rounded-full h-2">
-                                    <div className="bg-amber-500 h-2 rounded-full" style={{ width: '30%' }}></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span className="text-gray-600">Produce</span>
-                                    <span className="font-medium text-gray-900">9/10</span>
-                                </div>
-                                <div className="w-full bg-gray-100 rounded-full h-2">
-                                    <div className="bg-[#059669] h-2 rounded-full" style={{ width: '90%' }}></div>
-                                </div>
-                            </div>
+                            {categoriesSnapshot.length > 0 ? (
+                                categoriesSnapshot.map(([catName, snap], idx) => {
+                                    const percent = snap.total > 0 ? Math.round((snap.active / snap.total) * 100) : 0;
+                                    const progressBarColor = percent < 50 ? 'bg-amber-500' : 'bg-[#059669]';
+                                    return (
+                                        <div key={idx}>
+                                            <div className="flex justify-between text-sm mb-1">
+                                                <span className="text-gray-600">{catName}</span>
+                                                <span className="font-medium text-gray-900">{snap.active}/{snap.total} active</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 rounded-full h-2">
+                                                <div className={`${progressBarColor} h-2 rounded-full`} style={{ width: `${percent}%` }}></div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-sm text-gray-500 py-2">No items in inventory. Add listings to see snapshot.</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -271,9 +330,7 @@ export default function DashboardPage() {
     );
 }
 
-
 // Subcomponents
-// eslint-disable-next-line no-unused-vars
 function MetricCard({ icon: Icon, label, value, subValue, trend, color }) {
     const colorClasses = {
         blue: 'text-blue-600 bg-blue-50 border-blue-100',
@@ -306,7 +363,6 @@ function MetricCard({ icon: Icon, label, value, subValue, trend, color }) {
     );
 }
 
-// eslint-disable-next-line no-unused-vars
 function QuickActionButton({ icon: Icon, label, to, color }) {
     const colorClasses = {
         blue: 'text-blue-600 bg-blue-50 group-hover:bg-blue-100',

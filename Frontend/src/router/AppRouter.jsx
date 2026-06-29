@@ -42,6 +42,17 @@ import AnalyticsPage from '../pages/restaurant/AnalyticsPage';
 import RestaurantNotificationsPage from '../pages/restaurant/NotificationsPage';
 import SettingsPage from '../pages/restaurant/SettingsPage';
 
+// NGO Pages
+import NgoLayout from '../layouts/NgoLayout';
+import NgoDashboardPage from '../pages/ngo/DashboardPage';
+import AvailableDonationsPage from '../pages/ngo/AvailableDonationsPage';
+import RequestDetailPage from '../pages/ngo/RequestDetailPage';
+import PickupSchedulePage from '../pages/ngo/PickupSchedulePage';
+import ImpactAnalyticsPage from '../pages/ngo/ImpactAnalyticsPage';
+import BeneficiaryManagementPage from '../pages/ngo/BeneficiaryManagementPage';
+import NgoProfilePage from '../pages/ngo/ProfilePage';
+import NgoNotificationsPage from '../pages/ngo/NotificationsPage';
+
 function ProtectedRoute({ children }) {
     const { isAuthenticated, isLoading } = useAuth();
     if (isLoading) return (
@@ -62,6 +73,18 @@ function RestaurantRoute({ children }) {
     );
     if (!isAuthenticated) return <Navigate to="/login" replace />;
     if (user?.role !== 'restaurant') return <Navigate to="/consumer/dashboard" replace />;
+    return children;
+}
+
+function NgoRoute({ children }) {
+    const { isAuthenticated, isLoading, user } = useAuth();
+    if (isLoading) return (
+        <div className="min-h-screen flex items-center justify-center bg-[#ECFDF5]">
+            <div className="w-12 h-12 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin" />
+        </div>
+    );
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (user?.role !== 'ngo') return <Navigate to="/consumer/dashboard" replace />;
     return children;
 }
 
@@ -117,6 +140,22 @@ export default function AppRouter() {
                 <Route path="/restaurant/analytics" element={<AnalyticsPage />} />
                 <Route path="/restaurant/notifications" element={<RestaurantNotificationsPage />} />
                 <Route path="/restaurant/settings" element={<SettingsPage />} />
+            </Route>
+
+            {/* Protected NGO Routes */}
+            <Route element={
+                <NgoRoute>
+                    <NgoLayout />
+                </NgoRoute>
+            }>
+                <Route path="/ngo/dashboard" element={<NgoDashboardPage />} />
+                <Route path="/ngo/donations" element={<AvailableDonationsPage />} />
+                <Route path="/ngo/requests/:id" element={<RequestDetailPage />} />
+                <Route path="/ngo/pickups" element={<PickupSchedulePage />} />
+                <Route path="/ngo/impact" element={<ImpactAnalyticsPage />} />
+                <Route path="/ngo/beneficiaries" element={<BeneficiaryManagementPage />} />
+                <Route path="/ngo/profile" element={<NgoProfilePage />} />
+                <Route path="/ngo/notifications" element={<NgoNotificationsPage />} />
             </Route>
 
             {/* Fallback */}
