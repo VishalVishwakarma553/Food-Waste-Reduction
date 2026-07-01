@@ -74,12 +74,12 @@ export default function ImpactPage() {
     const unearned = badges.filter(b => !b.earned);
 
     return (
-        <div className="space-y-8">
-            <h1 className="text-2xl font-bold text-[#064E3B]">My Impact Dashboard</h1>
-
+        <div className="space-y-4 sm:space-y-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">My Impact Dashboard</h1>
+ 
             {/* Hero Impact */}
-            <div className="rounded-[1.5rem] border border-[#D1FAE5] shadow-lg bg-gradient-to-br from-[#059669] to-[#0891B2] p-8 text-white">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="rounded-[1.5rem] border border-[#D1FAE5] shadow-lg bg-gradient-to-br from-[#059669] to-[#0891B2] p-4 sm:p-6 md:p-8 text-white">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                     {[
                         { value: `${stats.foodSaved ?? 0}kg`, label: 'Food Saved', icon: Leaf },
                         { value: `₹${(stats.moneySaved ?? 0).toLocaleString('en-IN')}`, label: 'Money Saved', icon: DollarSign },
@@ -89,15 +89,15 @@ export default function ImpactPage() {
                         // eslint-disable-next-line no-unused-vars
                         ({ value, label, icon: Icon }) => (
                             <div key={label} className="text-center">
-                                <div className="flex justify-center mb-3 text-white"><Icon className="w-8 h-8" strokeWidth={1.5} /></div>
-                                <p className="text-3xl font-bold">{value}</p>
-                                <p className="text-white/80 text-sm mt-1">{label}</p>
+                                <div className="flex justify-center mb-2 sm:mb-3 text-white"><Icon className="w-6 h-6 sm:w-8 sm:h-8" strokeWidth={1.5} /></div>
+                                <p className="text-xl sm:text-3xl font-bold">{value}</p>
+                                <p className="text-white/80 text-xs sm:text-sm mt-0.5 sm:mt-1">{label}</p>
                             </div>
                         ))}
                 </div>
-                <div className="mt-6 pt-6 border-t border-white/20 flex items-center justify-between flex-wrap gap-3">
-                    <p className="text-white/80 text-sm">Community Rank: <strong className="text-white text-lg">#{stats.leaderboardRank ?? '—'}</strong></p>
-                    <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-full transition-all cursor-pointer">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/20 flex items-center justify-between flex-wrap gap-3">
+                    <p className="text-white/80 text-xs sm:text-sm">Community Rank: <strong className="text-white text-base sm:text-lg">#{stats.leaderboardRank ?? '—'}</strong></p>
+                    <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white text-xs sm:text-sm font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all cursor-pointer">
                         <FiShare2 className="w-4 h-4" /> Share My Impact
                     </button>
                 </div>

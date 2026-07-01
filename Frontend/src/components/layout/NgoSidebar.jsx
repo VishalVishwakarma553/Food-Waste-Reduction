@@ -1,8 +1,10 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react';
+import api, { IMG_BASE_URL } from '../../lib/api';
 import {
     FiGrid, FiShoppingBag, FiCalendar, FiBarChart2, FiUsers, FiSettings,
-    FiBell, FiLogOut, FiFeather
+    FiBell, FiLogOut, FiFeather, FiX
 } from 'react-icons/fi';
 
 const navItems = [
@@ -11,20 +13,35 @@ const navItems = [
     { to: '/ngo/pickups', icon: FiCalendar, label: 'Pickup Schedule' },
     { to: '/ngo/impact', icon: FiBarChart2, label: 'Impact & Analytics' },
     { to: '/ngo/beneficiaries', icon: FiUsers, label: 'Beneficiary Management' },
-    { to: '/ngo/notifications', icon: FiBell, label: 'Notifications', badge: true },
     { to: '/ngo/profile', icon: FiSettings, label: 'Profile & Documents' },
 ];
 
-export default function NgoSidebar() {
+export default function NgoSidebar({ onClose }) {
     const { user, logout } = useAuth();
     const displayName = user?.name || 'NGO Partner';
     const subTitle = user?.businessName || 'Charity Organization';
 
+    const [stats, setStats] = useState(null);
+
+    useEffect(() => {
+        const fetchSidebarStats = async () => {
+            try {
+                const { data } = await api.get('/ngo/impact');
+                setStats(data.metrics);
+            } catch (err) {
+                console.error("Failed to fetch sidebar stats:", err);
+            }
+        };
+        if (user) {
+            fetchSidebarStats();
+        }
+    }, [user]);
+
     return (
-        <aside className="w-64 min-h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">
+        <aside className="w-64 h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">
             {/* Logo */}
-            <div className="p-6 border-b border-[#D1FAE5]">
-                <Link to="/" className="flex items-center gap-2">
+            <div className="p-5 border-b border-[#D1FAE5] flex items-center justify-between">
+                <Link to="/" className="flex items-center gap-2" onClick={onClose}>
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#059669] to-[#064E3B] flex items-center justify-center">
                         <FiFeather className="text-white w-4 h-4" />
                     </div>
@@ -35,14 +52,32 @@ export default function NgoSidebar() {
                         NGO
                     </span>
                 </Link>
+                {/* Close button for mobile */}
+                {onClose && (
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden p-1.5 rounded-lg hover:bg-[#D1FAE5] text-[#064E3B] transition-colors"
+                        aria-label="Close sidebar"
+                    >
+                        <FiX className="w-5 h-5" />
+                    </button>
+                )}
             </div>
 
             {/* Profile Mini */}
             <div className="p-4 border-b border-[#D1FAE5]">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#10B981] to-[#047857] flex items-center justify-center text-white font-bold text-lg ring-2 ring-[#D1FAE5] select-none">
-                        {displayName.charAt(0).toUpperCase()}
-                    </div>
+                    {user?.avatar ? (
+                        <img
+                            src={`${IMG_BASE_URL}${user.avatar}`}
+                            alt={displayName}
+                            className="w-10 h-10 rounded-xl object-cover shrink-0"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#10B981] to-[#047857] flex items-center justify-center text-white font-bold text-lg ring-2 ring-[#D1FAE5] select-none shrink-0">
+                            {displayName.charAt(0).toUpperCase()}
+                        </div>
+                    )}
                     <div className="min-w-0">
                         <p className="text-sm font-semibold text-[#064E3B] truncate">{displayName}</p>
                         <p className="text-xs text-[#065F46] truncate">{subTitle}</p>
@@ -54,22 +89,23 @@ export default function NgoSidebar() {
                         <p className="text-[#065F46]">Status</p>
                     </div>
                     <div className="text-center">
-                        <p className="font-bold text-[#059669]">12</p>
+                        <p className="font-bold text-[#059669]">{stats?.completedPickupsCount ?? 0}</p>
                         <p className="text-[#065F46]">Pickups</p>
                     </div>
                     <div className="text-center">
-                        <p className="font-bold text-[#059669]">450kg</p>
+                        <p className="font-bold text-[#059669]">{stats?.totalFoodServed ?? 0}kg</p>
                         <p className="text-[#065F46]">Saved</p>
                     </div>
                 </div>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
                 {navItems.map(({ to, icon: Icon, label, badge }) => (
                     <NavLink
                         key={to}
                         to={to}
+                        onClick={onClose}
                         className={({ isActive }) =>
                             `sidebar-nav-item ${isActive ? 'active' : ''}`
                         }

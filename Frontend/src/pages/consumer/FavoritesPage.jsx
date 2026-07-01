@@ -14,15 +14,15 @@ export default function FavoritesPage() {
 
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-[#064E3B]">Favorites</h1>
+        <div className="space-y-4 sm:space-y-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">Favorites</h1>
 
             {/* Tabs */}
-            <div className="flex gap-2">
-                <button onClick={() => setActiveTab('food')} className={`tab-btn ${activeTab === 'food' ? 'active' : ''}`}>
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap p-0.5">
+                <button onClick={() => setActiveTab('food')} className={`tab-btn text-xs sm:text-sm py-1.5 px-3.5 sm:py-2 sm:px-5 inline-block shrink-0 ${activeTab === 'food' ? 'active' : ''}`}>
                     Saved Food ({favFood.length})
                 </button>
-                <button onClick={() => setActiveTab('restaurants')} className={`tab-btn ${activeTab === 'restaurants' ? 'active' : ''}`}>
+                <button onClick={() => setActiveTab('restaurants')} className={`tab-btn text-xs sm:text-sm py-1.5 px-3.5 sm:py-2 sm:px-5 inline-block shrink-0 ${activeTab === 'restaurants' ? 'active' : ''}`}>
                     Restaurants ({favRests.length})
                 </button>
             </div>
@@ -74,11 +74,11 @@ export default function FavoritesPage() {
                                             </div>
                                             {!isExpired ? (
                                                 <button onClick={() => addToCart(food.id, 1, food.pickupSlots?.[0], food)}
-                                                    className="flex items-center gap-1.5 text-xs font-semibold bg-[#059669] text-white px-3 py-1.5 rounded-full hover:bg-[#047857] cursor-pointer transition-colors">
-                                                    <FiShoppingCart className="w-3.5 h-3.5" /> Add
+                                                    className="btn-primary text-[10px] sm:text-xs py-1 px-2.5 sm:py-1.5 sm:px-3 shadow-none gap-1 inline-flex items-center shrink-0">
+                                                    <FiShoppingCart className="w-3 h-3" /> Add
                                                 </button>
                                             ) : (
-                                                <span className="text-xs text-red-500 font-semibold">Unavailable</span>
+                                                <span className="text-[10px] sm:text-xs text-red-500 font-semibold shrink-0">Unavailable</span>
                                             )}
                                         </div>
                                     </div>

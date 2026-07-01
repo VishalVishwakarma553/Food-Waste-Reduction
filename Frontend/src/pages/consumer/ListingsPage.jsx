@@ -6,12 +6,12 @@ import api from '../../lib/api';
 
 // ponytail: static constants outside component
 const SORT_OPTIONS = [
-    { value: 'expiry',      label: 'Expiring Soon' },
-    { value: 'price-asc',  label: 'Price: Low to High' },
+    { value: 'expiry', label: 'Expiring Soon' },
+    { value: 'price-asc', label: 'Price: Low to High' },
     { value: 'price-desc', label: 'Price: High to Low' },
-    { value: 'distance',   label: 'Nearest First' },
-    { value: 'discount',   label: 'Highest Discount' },
-    { value: 'recommended',label: 'Recommended' },
+    { value: 'distance', label: 'Nearest First' },
+    { value: 'discount', label: 'Highest Discount' },
+    { value: 'recommended', label: 'Recommended' },
 ];
 const DIETARY_OPTIONS = ['Veg', 'Vegan', 'Gluten-Free', 'Dairy-Free'];
 const STATIC_CATEGORIES = ['All', 'Bakery', 'Prepared Meals', 'Fresh Produce', 'Dairy', 'Beverages', 'Other'];
@@ -142,22 +142,22 @@ export default function ListingsPage() {
     ].filter(Boolean).length;
 
     return (
-        <div>
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#064E3B]">Browse Food Listings</h1>
-                    <p className="text-sm text-[#065F46]">
+                    <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">Browse Food Listings</h1>
+                    <p className="text-xs text-[#065F46]">
                         {loading ? 'Loading...' : `${listings.length} items available`}
                     </p>
                 </div>
-                <div className="relative max-w-sm flex-1">
+                <div className="relative w-full sm:max-w-xs">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4" />
                     <input
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Search food or restaurant..."
-                        className="input-field pl-10 pr-8 py-2.5 text-sm"
+                        className="input-field !pl-10 pr-8 py-2 text-sm"
                     />
                     {search && (
                         <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
@@ -283,10 +283,10 @@ export default function ListingsPage() {
                     </div>
 
                     {/* Category pill chips */}
-                    <div className="flex gap-2 flex-wrap mb-5">
+                    <div className="flex gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap mb-5 p-0.5">
                         {categories.map(cat => (
                             <button key={cat} onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer ${selectedCategory === cat ? 'bg-[#059669] text-white shadow-md' : 'bg-white text-[#064E3B] border border-[#D1FAE5] hover:border-[#059669]'}`}>
+                                className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer inline-block shrink-0 ${selectedCategory === cat ? 'bg-[#059669] text-white shadow-md' : 'bg-white text-[#064E3B] border border-[#D1FAE5] hover:border-[#059669]'}`}>
                                 {cat}
                             </button>
                         ))}

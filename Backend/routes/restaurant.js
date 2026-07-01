@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requireAuth, requireRole } from "../middleware/auth.js";
+import { checkExpiryMiddleware } from "../middleware/checkExpiry.js";
 import {
     getProfile,
     updateSettings,
@@ -53,7 +54,7 @@ router.use(requireAuth, requireRole("restaurant"));
 router.get("/me", getProfile);
 
 // Dashboard
-router.get("/dashboard", getRestaurantDashboard);
+router.get("/dashboard", checkExpiryMiddleware, getRestaurantDashboard);
 
 // Analytics
 router.get("/analytics", getRestaurantAnalytics);
@@ -63,8 +64,8 @@ router.patch("/settings", upload.single("businessImage"), updateSettings);
 
 // Listings
 router.get("/stats", getStats);
-router.get("/listings", getListings);
-router.get("/listings/export", exportListingsCSV); // must be before :id
+router.get("/listings", checkExpiryMiddleware, getListings);
+router.get("/listings/export", checkExpiryMiddleware, exportListingsCSV); // must be before :id
 router.post("/listings", upload.array("images", 5), createListing);
 router.patch("/listings/:id", upload.array("images", 5), updateListing);
 router.delete("/listings/:id", deleteListing);

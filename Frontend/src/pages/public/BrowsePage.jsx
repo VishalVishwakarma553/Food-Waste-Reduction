@@ -119,20 +119,20 @@ export default function BrowsePage() {
     return (
         <div className="pt-20 pb-20 min-h-screen bg-[#ECFDF5]">
             {/* Header */}
-            <div className="gradient-hero py-14 text-center relative overflow-hidden mb-8">
+            <div className="gradient-hero py-10 sm:py-14 text-center relative overflow-hidden mb-8">
                 <div className="hero-blob w-60 h-60 bg-[#10B981] -top-10 right-10" />
                 <div className="relative z-10 max-w-3xl mx-auto px-4">
-                    <h1 className="text-4xl font-bold text-white mb-3">Browse Available Food</h1>
-                    <p className="text-white/80 mb-6">Discover fresh, quality surplus food near you at incredible prices.</p>
-                    <div className="bg-white rounded-2xl p-1 flex gap-2 shadow-lg max-w-xl mx-auto">
+                    <h1 className="text-2xl sm:text-4xl font-bold text-white mb-3">Browse Available Food</h1>
+                    <p className="text-sm sm:text-base text-white/80 mb-6">Discover fresh, quality surplus food near you at incredible prices.</p>
+                    <div className="bg-white rounded-2xl p-1.5 flex flex-col sm:flex-row gap-2 shadow-lg max-w-xl mx-auto">
                         <div className="flex items-center gap-2 flex-1 px-3">
-                            <FiSearch className="text-[#059669] w-5 h-5 shrink-0" />
+                            <FiSearch className="text-[#059669] w-4.5 h-4.5 shrink-0" />
                             <input
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
                                 type="text"
                                 placeholder="Search food, restaurant..."
-                                className="flex-1 outline-none text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent "
+                                className="flex-1 outline-none text-xs sm:text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent py-1.5 sm:py-2"
                             />
                             {search && (
                                 <button onClick={() => setSearch('')} className="cursor-pointer">
@@ -140,7 +140,7 @@ export default function BrowsePage() {
                                 </button>
                             )}
                         </div>
-                        <button className="search-btn-primary text-sm shrink-0 py-1 px-2" onClick={fetchListings}>Search</button>
+                        <button className="search-btn-primary text-xs sm:text-sm shrink-0 py-1.5 px-4 w-full sm:w-auto justify-center" onClick={fetchListings}>Search</button>
                     </div>
                 </div>
             </div>
@@ -288,12 +288,12 @@ export default function BrowsePage() {
                     </div>
 
                     {/* Category chips */}
-                    <div className="flex gap-2 flex-wrap mb-6">
+                    <div className="flex gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap mb-6 p-0.5">
                         {categories.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer ${selectedCategory === cat
+                                className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer inline-block shrink-0 ${selectedCategory === cat
                                     ? 'bg-[#059669] text-white shadow-md'
                                     : 'bg-white text-[#064E3B] border border-[#D1FAE5] hover:border-[#059669]'
                                     }`}

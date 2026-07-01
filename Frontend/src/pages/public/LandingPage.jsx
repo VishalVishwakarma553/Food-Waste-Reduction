@@ -107,43 +107,43 @@ export default function LandingPage() {
                 <div className="hero-blob w-72 h-72 bg-[#0891B2] bottom-20 left-10" />
                 <div className="hero-blob w-52 h-52 bg-[#F59E0B] top-1/2 right-1/3" />
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 py-32 grid lg:grid-cols-2 gap-16 items-center">
+                <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 sm:py-32 grid lg:grid-cols-2 gap-12 sm:gap-16 items-center">
                     {/* Left */}
                     <div>
-                        <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 animate-fade-in">
-                            <FiFeather className="text-[#10B981] w-4 h-4" />
-                            <span className="text-white/90 text-sm font-medium">India's Free Food Rescue Platform</span>
+                        <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-3.5 py-1.5 mb-5 animate-fade-in text-xs sm:text-sm">
+                            <FiFeather className="text-[#10B981] w-3.5 h-3.5 shrink-0" />
+                            <span className="text-white/90 font-medium">India's Free Food Rescue Platform</span>
                         </div>
 
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 animate-fade-in-up">
+                        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4 sm:mb-6 animate-fade-in-up">
                             Rescue Food.<br />
                             <span className="text-[#10B981]">Feed People.</span><br />
                             <span style={{ background: 'linear-gradient(90deg,#FCD34D,#F59E0B)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Heal the Planet.</span>
                         </h1>
 
-                        <p className="text-xl text-white/80 leading-relaxed mb-8 animate-fade-in-up delay-200">
+                        <p className="text-sm sm:text-lg lg:text-xl text-white/80 leading-relaxed mb-6 sm:mb-8 animate-fade-in-up delay-200">
                             Restaurants list their end-of-day surplus food here. You browse, reserve, and <strong className="text-white">pick it up for free</strong>.
                             No payment. No waste. Just community.
                         </p>
 
                         {/* Search Bar */}
-                        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-2 flex gap-2 mb-8 shadow-2xl animate-fade-in-up delay-300">
+                        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-1.5 sm:p-2 flex flex-col sm:flex-row gap-2 mb-6 sm:mb-8 shadow-2xl animate-fade-in-up delay-300">
                             <div className="flex items-center gap-2 flex-1 px-3">
-                                <FiMapPin className="text-[#059669] w-5 h-5 shrink-0" />
+                                <FiMapPin className="text-[#059669] w-4.5 h-4.5 shrink-0" />
                                 <input
                                     type="text"
                                     placeholder="Enter your area (e.g., Koramangala, Bengaluru)"
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
                                     onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                                    className="flex-1 outline-none text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent py-2"
+                                    className="flex-1 outline-none text-xs sm:text-sm text-[#064E3B] placeholder-[#065F46]/50 bg-transparent py-1.5 sm:py-2"
                                 />
                             </div>
                             <button
                                 onClick={handleSearch}
-                                className="btn-primary text-sm px-6 shrink-0"
+                                className="btn-primary text-xs sm:text-sm px-5 py-2 sm:py-2.5 shrink-0 w-full sm:w-auto justify-center"
                             >
-                                Find Free Food <FiArrowRight className="w-4 h-4" />
+                                Find Free Food <FiArrowRight className="w-3.5 h-3.5" />
                             </button>
                         </div>
 
@@ -215,7 +215,7 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-12">
                         <span className="badge badge-green mb-3">Our Impact</span>
-                        <h2 className="text-4xl font-bold text-[#064E3B] mb-3">Changing India, One Meal at a Time</h2>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B] mb-3">Changing India, One Meal at a Time</h2>
                         <div className="section-divider" />
                     </div>
 
@@ -236,11 +236,11 @@ export default function LandingPage() {
             {/* ========== HOW IT WORKS ========== */}
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="text-center mb-14">
+                    <div className="text-center mb-10 sm:mb-14">
                         <span className="badge badge-green mb-3">Simple & Free</span>
-                        <h2 className="text-4xl font-bold text-[#064E3B] mb-3">How FoodSave Works</h2>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B] mb-3">How FoodSave Works</h2>
                         <div className="section-divider" />
-                        <p className="mt-6 text-[#065F46] max-w-xl mx-auto">
+                        <p className="mt-4 sm:mt-6 text-[#065F46] max-w-xl mx-auto text-sm sm:text-base">
                             Restaurants donate their surplus food. You reserve it, go to their address, and pick it up — completely free of charge.
                         </p>
                     </div>
@@ -281,10 +281,10 @@ export default function LandingPage() {
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
                         <div>
                             <span className="badge badge-green mb-3">Available Now</span>
-                            <h2 className="text-4xl font-bold text-[#064E3B]">Featured Food Listings</h2>
+                            <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B]">Featured Food Listings</h2>
                             <div className="section-divider mt-3 ml-0" style={{ margin: '0.75rem 0 0' }} />
                         </div>
-                        <Link to="/browse" className="btn-primary mt-6 md:mt-0 self-start md:self-auto">
+                        <Link to="/browse" className="btn-primary mt-4 md:mt-0 self-start md:self-auto py-2 px-4">
                             View All Listings <FiArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
@@ -300,9 +300,9 @@ export default function LandingPage() {
             {/* ========== TESTIMONIALS ========== */}
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="text-center mb-14">
+                    <div className="text-center mb-10 sm:mb-14">
                         <span className="badge badge-green mb-3">Community Stories</span>
-                        <h2 className="text-4xl font-bold text-[#064E3B] mb-3">What Our Community Says</h2>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B] mb-3">What Our Community Says</h2>
                         <div className="section-divider" />
                     </div>
 
@@ -352,8 +352,8 @@ export default function LandingPage() {
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
                     <div>
-                        <span className="badge badge-green mb-4">For Everyone</span>
-                        <h2 className="text-4xl font-bold text-[#064E3B] mb-6">A Platform Built for Impact</h2>
+                        <span className="badge badge-green mb-3">For Everyone</span>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B] mb-6">A Platform Built for Impact</h2>
                         <div className="space-y-6">
                             {[
                                 {
@@ -413,12 +413,12 @@ export default function LandingPage() {
                 <div className="hero-blob w-80 h-80 bg-[#10B981] top-0 right-10" />
                 <div className="hero-blob w-60 h-60 bg-[#0891B2] bottom-0 left-20" />
                 <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
-                    <FiFeather className="w-16 h-16 text-[#10B981] mx-auto mb-6 animate-float" />
-                    <h2 className="text-4xl font-bold text-white mb-4">Good Food Shouldn't Go to Waste</h2>
-                    <p className="text-lg text-white/80 mb-10">
+                    <FiFeather className="w-12 h-12 sm:w-16 sm:h-16 text-[#10B981] mx-auto mb-6 animate-float" />
+                    <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4">Good Food Shouldn't Go to Waste</h2>
+                    <p className="text-sm sm:text-lg text-white/80 mb-8 sm:mb-10">
                         Join 52,000+ community members and 4,200+ restaurants already rescuing food together — completely free, every single day.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <Link to="/register" className="bg-white text-[#059669] font-semibold text-base px-8 py-2.5 rounded-full hover:bg-opacity-90 transition-all duration-200 shadow-lg cursor-pointer">
                             Join Free — Rescue Food Today
                         </Link>

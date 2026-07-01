@@ -34,6 +34,13 @@ export function AuthProvider({ children }) {
         return data.user;
     };
 
+    const loginWithSocial = async (provider, accessToken) => {
+        const { data } = await api.post(`/auth/${provider}`, { accessToken });
+        persist(data.user, data.token);
+        toast.success(`Welcome back, ${data.user.businessName || data.user.name}! 🎉`);
+        return data.user;
+    };
+
     const logout = () => {
         setUser(null);
         localStorage.removeItem('foodsave_user');
@@ -58,7 +65,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, updateProfile, saveSettings, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, loginWithSocial, logout, updateProfile, saveSettings, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

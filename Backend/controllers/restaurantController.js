@@ -77,6 +77,9 @@ export async function createListing(req, res) {
         images = req.files.map(f => `/uploads/${f.filename}`);
     }
 
+    const allowedStatuses = ["active", "draft", "expired"];
+    const finalStatus = (status && typeof status === 'string' && allowedStatuses.includes(status)) ? status : "active";
+
     const listing = await prisma.foodListing.create({
         data: {
             restaurantId: req.user.id,
@@ -104,7 +107,7 @@ export async function createListing(req, res) {
             deliveryRadius: deliveryRadius ? parseFloat(deliveryRadius) : null,
             packaging: packaging || null,
             instructions: instructions || null,
-            status: status || "active",
+            status: finalStatus,
         }
     });
 
@@ -197,7 +200,12 @@ export async function updateListing(req, res) {
     if (deliveryRadius !== undefined) data.deliveryRadius = deliveryRadius ? parseFloat(deliveryRadius) : null;
     if (packaging !== undefined) data.packaging = packaging;
     if (instructions !== undefined) data.instructions = instructions;
-    if (status !== undefined) data.status = status;
+    if (status !== undefined) {
+        const allowedStatuses = ["active", "draft", "expired"];
+        if (typeof status === 'string' && allowedStatuses.includes(status)) {
+            data.status = status;
+        }
+    }
 
     const updated = await prisma.foodListing.update({ where: { id: listingId }, data });
     res.json({ listing: updated, message: "Listing updated successfully" });

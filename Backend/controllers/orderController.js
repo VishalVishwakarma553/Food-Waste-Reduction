@@ -45,7 +45,7 @@ export async function updateOrderStatus(req, res) {
         const restaurantId = req.user.id;
         const { status } = req.body;
 
-        const allowedStatuses = ["confirmed", "ready", "completed", "cancelled"];
+        const allowedStatuses = ["confirmed", "ready", "completed", "cancelled", "approved"];
         if (!status || !allowedStatuses.includes(status)) {
             return res.status(400).json({ error: `Invalid status. Must be one of: ${allowedStatuses.join(", ")}` });
         }
@@ -75,12 +75,47 @@ export async function updateOrderStatus(req, res) {
                 items: {
                     include: {
                         listing: {
-                            select: { id: true, name: true, restaurantId: true }
+                            select: {
+                                id: true, name: true, restaurantId: true, expiryDate: true,
+                                expiryTime: true,
+                                availableFrom: true,
+                                availableUntil: true,
+                                status: true
+                            }
                         }
                     }
                 }
             }
         });
+        if (status === "cancelled") {
+            const now = new Date();
+
+            for (const item of updated.items) {
+                const listing = item.listing;
+
+                if (!listing) continue;
+
+                // Combine expiryDate + expiryTime into a single Date object
+                const expiryDateTime = new Date(
+                    `${listing.expiryDate}T${listing.expiryTime}`
+                );
+
+                const isExpiryValid = expiryDateTime > now;
+
+                const isAvailable =
+                    (!listing.availableFrom || listing.availableFrom <= now) &&
+                    (!listing.availableUntil || listing.availableUntil >= now);
+
+                if (isExpiryValid && isAvailable) {
+                    await prisma.foodListing.update({
+                        where: { id: listing.id },
+                        data: {
+                            status: "active"
+                        }
+                    });
+                }
+            }
+        }
 
         res.json({ order: updated });
     } catch (err) {
@@ -159,17 +194,84 @@ export async function getOrder(req, res) {
 
 // PATCH /api/consumer/orders/:id/cancel  – cancel a pending/confirmed order
 export async function cancelOrder(req, res) {
-    const order = await prisma.order.findFirst({
-        where: { id: parseInt(req.params.id), consumerId: req.user.id }
-    });
-    if (!order) return res.status(404).json({ error: "Order not found" });
-    if (!["pending", "confirmed"].includes(order.status)) {
-        return res.status(400).json({ error: "Cannot cancel this order" });
+    try {
+        const order = await prisma.order.findFirst({
+            where: { id: parseInt(req.params.id), consumerId: req.user.id },
+            include: {
+                items: {
+                    include: {
+                        listing: true
+                    }
+                }
+            }
+        });
+        if (!order) return res.status(404).json({ error: "Order not found" });
+        
+        const allowedToCancel = ["pending", "confirmed", "approved", "ready"];
+        if (!allowedToCancel.includes(order.status)) {
+            return res.status(400).json({ error: "Cannot cancel this order" });
+        }
+        
+        const updated = await prisma.order.update({
+            where: { id: order.id },
+            data: { status: "cancelled" },
+            include: {
+                items: {
+                    include: {
+                        listing: true
+                    }
+                }
+            }
+        });
+
+        // Restore food listings to active if they are not expired yet
+        const now = new Date();
+        for (const item of updated.items) {
+            const listing = item.listing;
+            if (!listing) continue;
+
+            const expiryDateTime = new Date(`${listing.expiryDate}T${listing.expiryTime}`);
+            const isExpiryValid = isNaN(expiryDateTime.getTime()) || expiryDateTime > now;
+            const isAvailable = (!listing.availableFrom || new Date(listing.availableFrom) <= now) &&
+                                (!listing.availableUntil || new Date(listing.availableUntil) >= now);
+
+            if (isExpiryValid && isAvailable) {
+                await prisma.foodListing.update({
+                    where: { id: listing.id },
+                    data: { status: "active" }
+                });
+            }
+        }
+
+        res.json({ order: updated });
+    } catch (err) {
+        console.error("cancelOrder error:", err);
+        res.status(500).json({ error: "Failed to cancel order" });
     }
-    const updated = await prisma.order.update({
-        where: { id: order.id },
-        data: { status: "cancelled" },
-        include: { items: true }
-    });
-    res.json({ order: updated });
+}
+
+// PATCH /api/consumer/orders/:id/complete
+export async function completeOrder(req, res) {
+    try {
+        const orderId = parseInt(req.params.id);
+        const userId = req.user.id;
+
+        const order = await prisma.order.findFirst({
+            where: { id: orderId, consumerId: userId }
+        });
+
+        if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        const updated = await prisma.order.update({
+            where: { id: orderId },
+            data: { status: "completed" }
+        });
+
+        res.json({ order: updated, message: "Order completed successfully" });
+    } catch (err) {
+        console.error("completeOrder error:", err);
+        res.status(500).json({ error: "Failed to complete order" });
+    }
 }

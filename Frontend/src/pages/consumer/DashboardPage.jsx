@@ -23,15 +23,15 @@ import FoodCard from '../../components/shared/FoodCard';
 
 function StatCard({ label, value, sub, icon: Icon, color }) {
     return (
-        <div className="card p-6">
+        <div className="card p-4 sm:p-6">
             <div className="flex items-start justify-between mb-3">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${color}`}>
-                    <Icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center ${color}`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
             </div>
-            <p className="text-2xl font-bold text-[#064E3B]">{value ?? '—'}</p>
-            <p className="text-sm font-semibold text-[#065F46] mt-0.5">{label}</p>
-            {sub && <p className="text-xs text-[#065F46] mt-1 opacity-70">{sub}</p>}
+            <p className="text-xl sm:text-2xl font-bold text-[#064E3B]">{value ?? '—'}</p>
+            <p className="text-xs sm:text-sm font-semibold text-[#065F46] mt-0.5">{label}</p>
+            {sub && <p className="text-xs text-[#065F46] mt-1 opacity-70 hidden sm:block">{sub}</p>}
         </div>
     );
 }
@@ -90,23 +90,23 @@ export default function DashboardPage() {
     );
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-8">
             {/* Welcome */}
-            <div className="rounded-[1.5rem] border border-[#D1FAE5] p-6 bg-gradient-to-r from-[#059669] to-[#0891B2] text-white overflow-hidden relative shadow-lg">
+            <div className="rounded-[1.5rem] border border-[#D1FAE5] p-4 sm:p-6 bg-gradient-to-r from-[#059669] to-[#0891B2] text-white overflow-hidden relative shadow-lg">
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
                 <div className="absolute -bottom-10 -right-20 w-60 h-60 bg-white/5 rounded-full" />
-                <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
+                <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <p className="text-white/80 text-sm">Good evening,</p>
-                        <h1 className="text-2xl font-bold">{user?.name}! 👋</h1>
-                        <p className="text-white/80 text-sm mt-1">You've saved <strong className="text-white">{stats.totalFoodSaved ?? 0}kg</strong> of food. Keep going!</p>
+                        <p className="text-white/80 text-xs sm:text-sm">Good evening,</p>
+                        <h1 className="text-xl sm:text-2xl font-bold">{user?.name}! 👋</h1>
+                        <p className="text-white/80 text-xs sm:text-sm mt-1">You've saved <strong className="text-white">{stats.totalFoodSaved ?? 0}kg</strong> of food. Keep going!</p>
                     </div>
-                    <div className="flex gap-3">
-                        <Link to="/consumer/listings" className="bg-white text-[#059669] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-opacity-90 transition-all cursor-pointer">
+                    <div className="flex gap-2 flex-wrap">
+                        <Link to="/consumer/listings" className="bg-white text-[#059669] text-xs sm:text-sm font-bold px-4 py-2 rounded-full hover:bg-opacity-90 transition-all cursor-pointer">
                             Browse Food
                         </Link>
                         {cartCount > 0 && (
-                            <Link to="/consumer/cart" className="bg-white/20 text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-white/30 transition-all cursor-pointer border border-white/30">
+                            <Link to="/consumer/cart" className="bg-white/20 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-full hover:bg-white/30 transition-all cursor-pointer border border-white/30">
                                 Cart ({cartCount})
                             </Link>
                         )}
@@ -115,7 +115,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <StatCard label="Total Orders" value={stats.totalOrders} sub="All time" icon={FiShoppingBag} color="bg-gradient-to-br from-[#059669] to-[#10B981]" />
                 <StatCard label="Food Saved" value={`${stats.totalFoodSaved ?? 0}kg`} sub="Environmental impact" icon={FiFeather} color="bg-gradient-to-br from-[#0891B2] to-[#06b6d4]" />
                 <StatCard label="Money Saved" value={`₹${(stats.totalMoneySaved || 0).toLocaleString('en-IN')}`} sub="vs. original prices" icon={FiTrendingUp} color="bg-gradient-to-br from-[#F59E0B] to-[#fbbf24]" />
@@ -131,20 +131,28 @@ export default function DashboardPage() {
                             View All <FiArrowRight className="w-3 h-3" />
                         </Link>
                     </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                        {nearbyListings.map(food => (
-                            <FoodCard key={food.id} food={{
-                                ...food,
-                                images: food.images?.length ? food.images : (food.images ? [food.images] : ['https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80']),
-                                restaurantId: food.restaurantName,
-                                status: 'active',
-                                pickupSlots: ['Available for pickup'],
-                                pickup: true,
-                                delivery: false,
-                                dietary: { veg: true, vegan: false, glutenFree: true, dairyFree: false },
-                            }} />
-                        ))}
-                    </div>
+                    {nearbyListings.length === 0 ? (
+                        <div className="card-flat p-8 text-center flex flex-col items-center justify-center border-dashed border-2 border-[#D1FAE5] rounded-2xl bg-white/50 min-h-[220px] flex-1 ">
+                            <span className="text-4xl mb-3">🍽️</span>
+                            <p className="font-semibold text-[#064E3B] text-sm">No food listings nearby</p>
+                            <p className="text-xs text-[#065F46] opacity-75 mt-1 max-w-xs">Check back later or expand your search distance to find surplus food.</p>
+                        </div>
+                    ) : (
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            {nearbyListings.map(food => (
+                                <FoodCard key={food.id} food={{
+                                    ...food,
+                                    images: food.images?.length ? food.images : (food.images ? [food.images] : ['https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80']),
+                                    restaurantId: food.restaurantName,
+                                    status: 'active',
+                                    pickupSlots: ['Available for pickup'],
+                                    pickup: true,
+                                    delivery: false,
+                                    dietary: { veg: true, vegan: false, glutenFree: true, dairyFree: false },
+                                }} />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Sidebar column */}
@@ -157,22 +165,31 @@ export default function DashboardPage() {
                                 All <FiArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
-                        <div className="space-y-3">
-                            {recentOrders.map(order => (
-                                <Link key={order.id} to={`/consumer/orders`} className="card-flat p-4 flex items-center gap-3 hover:border-[#10B981] transition-colors cursor-pointer block">
-                                    <div className="w-10 h-10 rounded-xl bg-[#D1FAE5] flex items-center justify-center shrink-0 text-[#059669]">
-                                        <FiShoppingBag className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold text-[#064E3B] truncate">Order #{order.id}</p>
-                                        <p className="text-xs text-[#065F46]">{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
-                                    </div>
-                                    <span className={`badge text-xs shrink-0 ${statusColors[order.status] || 'bg-gray-100 text-gray-600'}`}>
-                                        {order.status}
-                                    </span>
-                                </Link>
-                            ))}
-                        </div>
+                        {recentOrders.length === 0 ? (
+                            <div className="card-flat p-6 text-center flex flex-col items-center justify-center border-dashed border-2 border-[#D1FAE5] rounded-2xl bg-white/50 min-h-[140px]">
+                                <span className="text-3xl mb-2">🛍️</span>
+                                <p className="font-semibold text-[#064E3B] text-sm">No orders yet</p>
+                                <p className="text-xs text-[#065F46] opacity-75 mt-1 max-w-xs">Claim some delicious surplus food to see your orders here.</p>
+                                <Link to="/consumer/listings" className="text-xs font-bold text-[#059669] hover:underline mt-2">Browse listings →</Link>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {recentOrders.map(order => (
+                                    <Link key={order.id} to={`/consumer/orders`} className="card-flat p-4 flex items-center gap-3 hover:border-[#10B981] transition-colors cursor-pointer block">
+                                        <div className="w-10 h-10 rounded-xl bg-[#D1FAE5] flex items-center justify-center shrink-0 text-[#059669]">
+                                            <FiShoppingBag className="w-5 h-5" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-[#064E3B] truncate">Order #{order.id}</p>
+                                            <p className="text-xs text-[#065F46]">{new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
+                                        </div>
+                                        <span className={`badge text-xs shrink-0 ${statusColors[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                                            {order.status}
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Badges */}
@@ -183,19 +200,27 @@ export default function DashboardPage() {
                                 All <FiArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
-                        <div className="grid grid-cols-4 gap-2">
-                            {earnedBadges.map(badge => {
-                                const BadgeIcon = BadgeIconMap[badge.icon] || Award;
-                                return (
-                                    <div key={badge.id} className="card p-2 text-center group cursor-pointer relative hover:bg-[#D1FAE5] transition-colors">
-                                        <div className="flex justify-center text-[#059669] my-1"><BadgeIcon className="w-6 h-6" strokeWidth={1.5} /></div>
-                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-28 bg-[#064E3B] text-white text-xs rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center pointer-events-none shadow-lg">
-                                            {badge.name}
+                        {earnedBadges.length === 0 ? (
+                            <div className="card-flat p-5 text-center flex flex-col items-center justify-center border-dashed border-2 border-[#D1FAE5] rounded-2xl bg-white/50 min-h-[100px]">
+                                <span className="text-3xl mb-1.5">🏆</span>
+                                <p className="font-semibold text-[#064E3B] text-sm">No badges earned</p>
+                                <p className="text-xs text-[#065F46] opacity-75 mt-0.5">Start saving food to unlock achievements!</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-4 gap-2">
+                                {earnedBadges.map(badge => {
+                                    const BadgeIcon = BadgeIconMap[badge.icon] || Award;
+                                    return (
+                                        <div key={badge.id} className="card p-2 text-center group cursor-pointer relative hover:bg-[#D1FAE5] transition-colors">
+                                            <div className="flex justify-center text-[#059669] my-1"><BadgeIcon className="w-6 h-6" strokeWidth={1.5} /></div>
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-28 bg-[#064E3B] text-white text-xs rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10 text-center pointer-events-none shadow-lg">
+                                                {badge.name}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

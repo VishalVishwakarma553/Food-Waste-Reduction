@@ -16,9 +16,9 @@ export default function AuthLayout() {
         return <Navigate to="/consumer/dashboard" replace />;
     }
     return (
-        <div className="min-h-screen bg-[#ECFDF5] flex">
+        <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#ECFDF5] flex">
             {/* Left Panel – Branding */}
-            <div className="hidden lg:flex lg:w-5/12 gradient-hero flex-col justify-between p-12 relative overflow-hidden">
+            <div className="hidden lg:flex lg:w-5/12 lg:h-screen gradient-hero flex-col justify-between p-12 relative overflow-hidden">
                 {/* Blob decorations */}
                 <div className="absolute top-20 right-10 w-60 h-60 bg-[#10B981]/20 rounded-full blur-3xl" />
                 <div className="absolute bottom-20 left-10 w-80 h-80 bg-[#0891B2]/20 rounded-full blur-3xl" />
@@ -67,7 +67,7 @@ export default function AuthLayout() {
             </div>
 
             {/* Right Panel – Form */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col lg:h-screen lg:overflow-y-auto">
                 {/* Mobile Logo */}
                 <div className="lg:hidden p-6 border-b border-[#D1FAE5]">
                     <Link to="/" className="flex items-center gap-2">

@@ -3,7 +3,8 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { requireAuth, requireRole } from "../middleware/auth.js";
-import { placeOrder, getOrders, getOrder, cancelOrder } from "../controllers/orderController.js";
+import { checkExpiryMiddleware } from "../middleware/checkExpiry.js";
+import { placeOrder, getOrders, getOrder, cancelOrder, completeOrder } from "../controllers/orderController.js";
 import { getProfile, updateProfile, updateNotifications, updatePrivacy, changePassword } from "../controllers/consumerController.js";
 import { getFavorites, toggleFavorite } from "../controllers/favoriteController.js";
 import { getDashboard, getImpact } from "../controllers/dashboardController.js";
@@ -38,13 +39,14 @@ router.post("/orders", placeOrder);
 router.get("/orders", getOrders);
 router.get("/orders/:id", getOrder);
 router.patch("/orders/:id/cancel", cancelOrder);
+router.patch("/orders/:id/complete", completeOrder);
 
 // Favorites
-router.get("/favorites", getFavorites);
+router.get("/favorites", checkExpiryMiddleware, getFavorites);
 router.post("/favorites/:listingId", toggleFavorite);
 
 // Dashboard
-router.get("/dashboard", getDashboard);
+router.get("/dashboard", checkExpiryMiddleware, getDashboard);
 router.get("/impact", getImpact);
 
 export default router;

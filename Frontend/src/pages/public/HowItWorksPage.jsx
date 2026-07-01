@@ -64,24 +64,24 @@ export default function HowItWorksPage() {
     return (
         <div className="pt-20">
             {/* Hero */}
-            <section className="gradient-hero py-20 text-center relative overflow-hidden">
+            <section className="gradient-hero py-14 sm:py-20 text-center relative overflow-hidden">
                 <div className="hero-blob w-72 h-72 bg-[#10B981] -top-20 right-10" />
                 <div className="relative z-10 max-w-3xl mx-auto px-4">
-                    <span className="badge bg-white/20 text-white mb-4">Simple Process</span>
-                    <h1 className="text-5xl font-bold text-white mb-4">How FoodSave Works</h1>
-                    <p className="text-xl text-white/80">From finding food to making impact — everything explained step by step.</p>
+                    <span className="badge bg-white/20 text-white mb-3">Simple Process</span>
+                    <h1 className="text-3xl sm:text-5xl font-bold text-white mb-3">How FoodSave Works</h1>
+                    <p className="text-sm sm:text-xl text-white/80">From finding food to making impact — everything explained step by step.</p>
                 </div>
             </section>
 
             {/* Tabs */}
-            <section className="py-20 bg-[#ECFDF5]">
+            <section className="py-14 sm:py-20 bg-[#ECFDF5]">
                 <div className="max-w-5xl mx-auto px-4">
-                    <div className="flex justify-center gap-3 mb-14">
+                    <div className="flex overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap justify-center gap-2 sm:gap-3 mb-10 p-0.5">
                         {tabs.map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
+                                className={`tab-btn text-xs sm:text-sm py-1.5 px-4 sm:py-2.5 sm:px-6 inline-block shrink-0 ${activeTab === tab ? 'active' : ''}`}
                             >
                                 {tab}
                             </button>
@@ -126,11 +126,11 @@ export default function HowItWorksPage() {
             </section>
 
             {/* FAQ */}
-            <section className="py-20 bg-white">
+            <section className="py-14 sm:py-20 bg-white">
                 <div className="max-w-3xl mx-auto px-4">
-                    <div className="text-center mb-14">
+                    <div className="text-center mb-10 sm:mb-14">
                         <span className="badge badge-green mb-3">FAQs</span>
-                        <h2 className="text-4xl font-bold text-[#064E3B]">Common Questions</h2>
+                        <h2 className="text-2xl sm:text-4xl font-bold text-[#064E3B]">Common Questions</h2>
                         <div className="section-divider" />
                     </div>
                     <div className="space-y-3">

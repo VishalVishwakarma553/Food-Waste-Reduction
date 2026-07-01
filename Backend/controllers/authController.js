@@ -78,3 +78,91 @@ export async function resetPassword(req, res) {
     await prisma.user.update({ where: { email }, data: { password: hashed, resetOtp: null, otpExpiry: null } });
     res.json({ message: "Password reset successfully" });
 }
+
+// POST /api/auth/google
+export async function googleLogin(req, res) {
+    const { accessToken } = req.body;
+    if (!accessToken) return res.status(400).json({ error: "Missing access token" });
+
+    try {
+        const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
+        if (!response.ok) {
+            return res.status(400).json({ error: "Failed to verify Google token" });
+        }
+        const data = await response.json();
+        const { email, name, picture } = data;
+        if (!email) return res.status(400).json({ error: "Google account does not provide an email" });
+
+        let user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            const crypto = await import("crypto");
+            const randomPassword = crypto.randomUUID();
+            const hashed = await bcrypt.hash(randomPassword, 10);
+            user = await prisma.user.create({
+                data: {
+                    name: name || "Google User",
+                    email,
+                    password: hashed,
+                    role: "consumer",
+                    avatar: picture || null,
+                },
+            });
+        } else if (!user.avatar && picture) {
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: { avatar: picture }
+            });
+        }
+
+        const { password: _, ...safe } = user;
+        res.json({ token: sign(user), user: safe });
+    } catch (err) {
+        console.error("Google authentication error:", err);
+        res.status(500).json({ error: "Google authentication failed" });
+    }
+}
+
+// POST /api/auth/facebook
+export async function facebookLogin(req, res) {
+    const { accessToken } = req.body;
+    if (!accessToken) return res.status(400).json({ error: "Missing access token" });
+
+    try {
+        const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=${accessToken}`);
+        if (!response.ok) {
+            return res.status(400).json({ error: "Failed to verify Facebook token" });
+        }
+        const data = await response.json();
+        const { email, name, picture } = data;
+        const avatarUrl = picture?.data?.url || null;
+
+        const userEmail = email || `${data.id}@facebook.com`;
+
+        let user = await prisma.user.findUnique({ where: { email: userEmail } });
+        if (!user) {
+            const crypto = await import("crypto");
+            const randomPassword = crypto.randomUUID();
+            const hashed = await bcrypt.hash(randomPassword, 10);
+            user = await prisma.user.create({
+                data: {
+                    name: name || "Facebook User",
+                    email: userEmail,
+                    password: hashed,
+                    role: "consumer",
+                    avatar: avatarUrl,
+                },
+            });
+        } else if (!user.avatar && avatarUrl) {
+            user = await prisma.user.update({
+                where: { id: user.id },
+                data: { avatar: avatarUrl }
+            });
+        }
+
+        const { password: _, ...safe } = user;
+        res.json({ token: sign(user), user: safe });
+    } catch (err) {
+        console.error("Facebook authentication error:", err);
+        res.status(500).json({ error: "Facebook authentication failed" });
+    }
+}

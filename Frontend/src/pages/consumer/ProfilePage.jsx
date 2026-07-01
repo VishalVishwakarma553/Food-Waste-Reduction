@@ -202,16 +202,16 @@ export default function ProfilePage() {
         || (profile?.avatar ? `${API_BASE}${profile.avatar}` : null);
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-[#064E3B]">My Profile</h1>
+        <div className="space-y-4 sm:space-y-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">My Profile</h1>
 
             {/* Avatar + name card */}
-            <div className="card-flat p-6">
-                <div className="flex items-center gap-5">
+            <div className="card-flat p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
                     <div className="relative shrink-0">
                         {avatarSrc
                             ? <img src={avatarSrc} alt={profile?.name} className="w-20 h-20 rounded-full object-cover ring-4 ring-[#D1FAE5]" />
-                            : <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#059669] to-[#0891B2] ring-4 ring-[#D1FAE5] flex items-center justify-center text-white text-3xl font-bold">
+                            : <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#059669] to-[#0891B2] ring-4 ring-[#D1FAE5] flex items-center justify-center text-white text-3xl font-bold mx-auto">
                                 {profile?.name?.[0]?.toUpperCase() || '?'}
                               </div>
                         }
@@ -226,9 +226,9 @@ export default function ProfilePage() {
                         </button>
                     </div>
                     <div className="flex-1 min-w-0">
-                        <h2 className="text-xl font-bold text-[#064E3B]">{profile?.name}</h2>
-                        <p className="text-sm text-[#065F46]">{profile?.email}</p>
-                        <div className="flex items-center gap-2 mt-2">
+                        <h2 className="text-lg sm:text-xl font-bold text-[#064E3B]">{profile?.name}</h2>
+                        <p className="text-xs sm:text-sm text-[#065F46] mt-0.5">{profile?.email}</p>
+                        <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
                             <span className="badge badge-green text-xs">Consumer</span>
                             {profile?.privacyShowLeaderboard && (
                                 <span className="badge bg-amber-100 text-amber-700 text-xs">Leaderboard Active</span>
@@ -236,27 +236,29 @@ export default function ProfilePage() {
                         </div>
                         {profile?.bio && <p className="text-xs text-[#065F46] mt-1 italic">"{profile.bio}"</p>}
                     </div>
-                    {!editing ? (
-                        <button onClick={() => setEditing(true)} className="btn-secondary text-sm py-2 px-4 shrink-0">
-                            <FiEdit2 className="w-4 h-4" /> Edit
-                        </button>
-                    ) : (
-                        <div className="flex gap-2 shrink-0">
-                            <button onClick={handleSaveProfile} disabled={saving} className="btn-primary text-sm py-2 px-4 disabled:opacity-60">
-                                {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><FiSave className="w-4 h-4" /> Save</>}
+                    <div className="w-full sm:w-auto shrink-0 flex justify-center sm:justify-end">
+                        {!editing ? (
+                            <button onClick={() => setEditing(true)} className="btn-secondary text-xs sm:text-sm py-1.5 px-3 sm:py-2 sm:px-4 shrink-0 w-full sm:w-auto flex justify-center items-center gap-1">
+                                <FiEdit2 className="w-4 h-4" /> Edit Profile
                             </button>
-                            <button onClick={handleCancelEdit} className="btn-secondary text-sm py-2 px-3">
-                                <FiX className="w-4 h-4" />
-                            </button>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="flex gap-2 w-full sm:w-auto">
+                                <button onClick={handleSaveProfile} disabled={saving} className="btn-primary text-xs sm:text-sm py-1.5 px-3 sm:py-2 sm:px-4 disabled:opacity-60 flex-1 sm:flex-none justify-center">
+                                    {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><FiSave className="w-4 h-4" /> Save</>}
+                                </button>
+                                <button onClick={handleCancelEdit} className="btn-secondary text-xs sm:text-sm py-1.5 px-2.5 sm:py-2 sm:px-3 flex-none justify-center">
+                                    <FiX className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap p-0.5">
                 {tabs.map(t => (
-                    <button key={t} onClick={() => setActiveTab(t)} className={`tab-btn ${activeTab === t ? 'active' : ''}`}>{t}</button>
+                    <button key={t} onClick={() => setActiveTab(t)} className={`tab-btn text-xs sm:text-sm py-1.5 px-3.5 sm:py-2 sm:px-5 inline-block shrink-0 ${activeTab === t ? 'active' : ''}`}>{t}</button>
                 ))}
             </div>
 

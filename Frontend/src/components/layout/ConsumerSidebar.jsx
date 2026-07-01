@@ -1,13 +1,12 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import {
     FiGrid, FiList, FiShoppingCart, FiBarChart2, FiHeart,
-    FiBell, FiUser, FiLogOut, FiStar, FiFeather, FiCamera
+    FiBell, FiUser, FiLogOut, FiStar, FiFeather, FiCamera, FiX
 } from 'react-icons/fi';
 
 const API_BASE = 'http://localhost:8080';
-
 
 const navItems = [
     { to: '/consumer/dashboard', icon: FiGrid, label: 'Dashboard' },
@@ -15,19 +14,18 @@ const navItems = [
     { to: '/consumer/orders', icon: FiStar, label: 'My Orders' },
     { to: '/consumer/impact', icon: FiBarChart2, label: 'My Impact' },
     { to: '/consumer/favorites', icon: FiHeart, label: 'Favorites' },
-    { to: '/consumer/notifications', icon: FiBell, label: 'Notifications', badge: true },
     { to: '/consumer/profile', icon: FiUser, label: 'Profile' },
 ];
 
-export default function ConsumerSidebar() {
+export default function ConsumerSidebar({ onClose }) {
     const { user, logout } = useAuth();
     const { cartCount } = useCart();
 
     return (
-        <aside className="w-64 min-h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">
+        <aside className="w-64 h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">
             {/* Logo */}
-            <div className="p-6 border-b border-[#D1FAE5]">
-                <Link to="/" className="flex items-center gap-2">
+            <div className="p-5 border-b border-[#D1FAE5] flex items-center justify-between">
+                <Link to="/" className="flex items-center gap-2" onClick={onClose}>
                     <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
                         <FiFeather className="text-white w-4 h-4" />
                     </div>
@@ -35,6 +33,16 @@ export default function ConsumerSidebar() {
                         Food<span className="text-[#059669]">Save</span>
                     </span>
                 </Link>
+                {/* Close button for mobile */}
+                {onClose && (
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden p-1.5 rounded-lg hover:bg-[#D1FAE5] text-[#064E3B] transition-colors"
+                        aria-label="Close sidebar"
+                    >
+                        <FiX className="w-5 h-5" />
+                    </button>
+                )}
             </div>
 
             {/* User Profile Mini */}
@@ -42,7 +50,7 @@ export default function ConsumerSidebar() {
                 <div className="flex items-center gap-3">
                     {user?.avatar ? (
                         <img src={`${API_BASE}${user.avatar}`} alt={user?.name}
-                            className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D1FAE5]"
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D1FAE5] shrink-0"
                             onError={(e) => { e.target.style.display = 'none'; }} />
                     ) : (
                         <div className="w-10 h-10 rounded-full bg-[#D1FAE5] flex items-center justify-center shrink-0">
@@ -71,11 +79,12 @@ export default function ConsumerSidebar() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1">
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
                 {navItems.map(({ to, icon: Icon, label, badge }) => (
                     <NavLink
                         key={to}
                         to={to}
+                        onClick={onClose}
                         className={({ isActive }) =>
                             `sidebar-nav-item ${isActive ? 'active' : ''}`
                         }
@@ -91,6 +100,7 @@ export default function ConsumerSidebar() {
                 {/* Cart with count */}
                 <NavLink
                     to="/consumer/cart"
+                    onClick={onClose}
                     className={({ isActive }) =>
                         `sidebar-nav-item ${isActive ? 'active' : ''}`
                     }
@@ -109,6 +119,7 @@ export default function ConsumerSidebar() {
             <div className="p-4 border-t border-[#D1FAE5] space-y-2">
                 <Link
                     to="/browse"
+                    onClick={onClose}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-[#059669] to-[#10B981] hover:opacity-90 transition-opacity cursor-pointer"
                 >
                     <FiList className="w-4 h-4" /> Browse Public Listings
@@ -123,5 +134,3 @@ export default function ConsumerSidebar() {
         </aside>
     );
 }
-
-

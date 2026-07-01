@@ -137,18 +137,18 @@ export default function MyListingsPage() {
     };
 
     return (
-        <div className="space-y-6 animate-fadeIn">
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#111827]">My Listings</h1>
-                    <p className="text-gray-500 text-sm mt-1">Manage your food rescue inventory and track performance.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">My Listings</h1>
+                    <p className="text-gray-500 text-xs sm:text-sm mt-1">Manage your food rescue inventory and track performance.</p>
                 </div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                     <button
                         onClick={handleExportCSV}
                         disabled={exportLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-60"
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-60 flex-1 sm:flex-none justify-center"
                     >
                         {exportLoading
                             ? <FiLoader className="w-4 h-4 animate-spin" />
@@ -156,7 +156,7 @@ export default function MyListingsPage() {
                         }
                         Export CSV
                     </button>
-                    <Link to="/restaurant/add-listing" className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors shadow-sm">
+                    <Link to="/restaurant/add-listing" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors shadow-sm flex-1 sm:flex-none justify-center">
                         <FiPlus className="w-4 h-4" /> Add Listing
                     </Link>
                 </div>

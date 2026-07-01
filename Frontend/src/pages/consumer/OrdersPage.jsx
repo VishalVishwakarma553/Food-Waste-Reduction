@@ -6,9 +6,10 @@ import api from '../../lib/api';
 const tabs = ['All', 'Active', 'Completed', 'Cancelled'];
 
 const statusConfig = {
-    pending:   { label: 'Pending',   cls: 'status-pending' },
+    pending: { label: 'Pending', cls: 'status-pending' },
     confirmed: { label: 'Confirmed', cls: 'status-confirmed' },
-    ready:     { label: 'Ready',     cls: 'status-ready' },
+    approved: { label: 'Ready for Pickup', cls: 'status-ready' },
+    ready: { label: 'Ready', cls: 'status-ready' },
     completed: { label: 'Completed', cls: 'status-completed' },
     cancelled: { label: 'Cancelled', cls: 'status-cancelled' },
 };
@@ -22,16 +23,16 @@ export default function OrdersPage() {
     useEffect(() => {
         api.get('/consumer/orders')
             .then(r => setOrders(r.data.orders))
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => setLoading(false));
     }, []);
 
     const filtered = orders.filter(o => {
         const matchTab =
             activeTab === 'All' ? true :
-            activeTab === 'Active' ? ['pending', 'confirmed', 'ready'].includes(o.status) :
-            activeTab === 'Completed' ? o.status === 'completed' :
-            o.status === 'cancelled';
+                activeTab === 'Active' ? ['pending', 'confirmed', 'approved', 'ready'].includes(o.status) :
+                    activeTab === 'Completed' ? o.status === 'completed' :
+                        o.status === 'cancelled';
         const matchSearch =
             String(o.id).includes(search) ||
             (o.items[0]?.restaurantName || '').toLowerCase().includes(search.toLowerCase());
@@ -39,22 +40,22 @@ export default function OrdersPage() {
     });
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-2xl font-bold text-[#064E3B]">My Orders</h1>
-                <div className="relative max-w-xs flex-1">
+        <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">My Orders</h1>
+                <div className="relative w-full sm:max-w-xs">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4" />
                     <input value={search} onChange={e => setSearch(e.target.value)}
                         placeholder="Search by ID or restaurant..."
-                        className="input-field pl-10 py-2 text-sm" />
+                        className="input-field !pl-10 py-2 text-sm" />
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 overflow-x-auto hide-scrollbar whitespace-nowrap flex-nowrap p-0.5">
                 {tabs.map(t => (
                     <button key={t} onClick={() => setActiveTab(t)}
-                        className={`tab-btn ${activeTab === t ? 'active' : ''}`}>
+                        className={`tab-btn text-xs sm:text-sm py-1.5 px-3.5 sm:py-2 sm:px-5 inline-block shrink-0 ${activeTab === t ? 'active' : ''}`}>
                         {t}
                     </button>
                 ))}

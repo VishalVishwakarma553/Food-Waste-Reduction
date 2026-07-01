@@ -78,8 +78,8 @@ export default function DashboardPage() {
     const currentChartData = selectedPeriod === 'This Week'
         ? dashboardData.chartData?.thisWeek
         : selectedPeriod === 'Last Week'
-        ? dashboardData.chartData?.lastWeek
-        : dashboardData.chartData?.thisMonth || [];
+            ? dashboardData.chartData?.lastWeek
+            : dashboardData.chartData?.thisMonth || [];
 
     // Group inventory listings by category
     const categoriesSnapshot = Object.entries(
@@ -93,68 +93,70 @@ export default function DashboardPage() {
     ).slice(0, 3);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Welcome Banner */}
-            <div className="bg-gradient-to-r from-[#064E3B] to-[#059669] rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden flex flex-col sm:flex-row items-center sm:items-start justify-between">
-                <div className="relative z-10 flex items-center gap-4 sm:gap-6 mb-4 sm:mb-0">
-                    {logoUrl ? (
-                        <img
-                            src={logoUrl}
-                            alt={`${displayName} Logo`}
-                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-4 border-white/20 shadow-lg"
-                        />
-                    ) : (
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-4 border-white/20 shadow-lg bg-white/20 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold">
-                            {displayName.charAt(0).toUpperCase()}
+            <div className="bg-gradient-to-r from-[#064E3B] to-[#059669] rounded-2xl p-4 sm:p-6 lg:p-8 text-white relative overflow-hidden">
+                <div className="relative z-10 flex flex-col gap-4">
+                    <div className="flex items-center gap-3 sm:gap-5">
+                        {logoUrl ? (
+                            <img
+                                src={logoUrl}
+                                alt={`${displayName} Logo`}
+                                className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl object-cover border-4 border-white/20 shadow-lg shrink-0"
+                            />
+                        ) : (
+                            <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl border-4 border-white/20 shadow-lg bg-white/20 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shrink-0">
+                                {displayName.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                        <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold truncate" style={{ fontFamily: "'Playfair Display SC', serif" }}>
+                                    Welcome back, {displayName}
+                                </h1>
+                                <span className="bg-[#10B981] text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm shrink-0">
+                                    <FiCheckCircle className="w-3 h-3" /> Verified
+                                </span>
+                            </div>
+                            <p className="text-[#D1FAE5] mt-1 text-sm">Here's what's happening with your store today.</p>
                         </div>
-                    )}
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: "'Playfair Display SC', serif" }}>
-                                Welcome back, {displayName}
-                            </h1>
-                            <span className="bg-[#10B981] text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                                <FiCheckCircle className="w-3 h-3" /> Verified
-                            </span>
-                        </div>
-                        <p className="text-[#D1FAE5] mt-1">Here's what's happening with your store today.</p>
+                    </div>
+                    <div className="flex">
+                        <Link to="/restaurant/add-listing" className="btn-primary bg-white text-[#064E3B] hover:bg-[#F0FDF4] border-none text-sm py-2 px-4">
+                            Add New Listing
+                        </Link>
                     </div>
                 </div>
-                <div className="relative z-10 flex gap-3">
-                    <Link to="/restaurant/add-listing" className="btn-primary bg-white text-[#064E3B] hover:bg-[#F0FDF4] border-none">
-                        Add New Listing
-                    </Link>
-                </div>
                 {/* Decorative Elements */}
-                <div className="absolute top-[-20%] right-[-5%] w-[40%] h-[150%] bg-white/5 rotate-12 blur-3xl rounded-full point-events-none" />
+                <div className="absolute top-[-20%] right-[-5%] w-[40%] h-[150%] bg-white/5 rotate-12 blur-3xl rounded-full pointer-events-none" />
             </div>
 
             {/* Key Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <MetricCard icon={FiPackage} label="Active Listings" value={stats.active} trend={`${stats.total} total`} color="blue" />
                 <MetricCard icon={FiShoppingBag} label="Draft Listings" value={stats.draft} trend="Unpublished" color="green" />
                 <MetricCard icon={FiTrendingUp} label="Expired Listings" value={stats.expired} trend="Need attention" color="teal" />
                 <MetricCard icon={FiStar} label="Total Listings" value={stats.total} trend="All time" color="amber" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                 {/* Charts Area (Spans 2 columns) */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                     {/* Impact Chart */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-bold text-[#111827]">Impact Overview ({selectedPeriod})</h2>
-                            <select 
-                                value={selectedPeriod} 
+                    <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-4 sm:p-6">
+                        <div className="flex items-center justify-between mb-4 sm:mb-6">
+                            <h2 className="text-base sm:text-lg font-bold text-[#111827]">Impact Overview ({selectedPeriod})</h2>
+                            <select
+                                value={selectedPeriod}
                                 onChange={(e) => setSelectedPeriod(e.target.value)}
-                                className="bg-gray-50 border border-gray-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                                className="bg-gray-50 border border-gray-200 text-xs sm:text-sm rounded-lg px-2 py-1.5 sm:px-3 focus:outline-none focus:ring-2 focus:ring-[#059669]"
                             >
                                 <option value="This Week">This Week</option>
                                 <option value="Last Week">Last Week</option>
                                 <option value="This Month">This Month</option>
                             </select>
                         </div>
-                        <div className="h-72">
+                        <div className="h-52 sm:h-72">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={currentChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
@@ -164,8 +166,8 @@ export default function DashboardPage() {
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} tickFormatter={(value) => `${value}`} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11 }} tickFormatter={(value) => `${value}`} />
                                     <Tooltip
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                         labelStyle={{ color: '#6B7280', marginBottom: '4px' }}
@@ -179,65 +181,65 @@ export default function DashboardPage() {
 
                     {/* Recent Orders Table */}
                     <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] overflow-hidden">
-                        <div className="p-6 border-b border-[#E5E7EB] flex items-center justify-between">
-                            <h2 className="text-lg font-bold text-[#111827]">Recent Orders</h2>
-                            <Link to="/restaurant/orders" className="text-sm text-[#059669] font-medium hover:underline flex items-center gap-1">
+                        <div className="p-4 sm:p-6 border-b border-[#E5E7EB] flex items-center justify-between">
+                            <h2 className="text-base sm:text-lg font-bold text-[#111827]">Recent Orders</h2>
+                            <Link to="/restaurant/orders" className="text-xs sm:text-sm text-[#059669] font-medium hover:underline flex items-center gap-1">
                                 View All <FiChevronRight className="w-4 h-4" />
                             </Link>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                            <table className="w-full text-left border-collapse min-w-[560px]">
                                 <thead>
                                     <tr className="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500">
-                                        <th className="px-6 py-4 font-semibold">Order ID</th>
-                                        <th className="px-6 py-4 font-semibold">Customer</th>
-                                        <th className="px-6 py-4 font-semibold">Time / Pickup</th>
-                                        <th className="px-6 py-4 font-semibold">Rescued Weight</th>
-                                        <th className="px-6 py-4 font-semibold">Status</th>
-                                        <th className="px-6 py-4 font-semibold text-right">Action</th>
+                                        <th className="px-4 py-3 font-semibold">Order ID</th>
+                                        <th className="px-4 py-3 font-semibold">Customer</th>
+                                        <th className="px-4 py-3 font-semibold">Time / Pickup</th>
+                                        <th className="px-4 py-3 font-semibold">Weight</th>
+                                        <th className="px-4 py-3 font-semibold">Status</th>
+                                        <th className="px-4 py-3 font-semibold text-right">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 text-sm">
                                     {recentOrders.length > 0 ? (
                                         recentOrders.map((order) => (
                                             <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                                                <td className="px-6 py-4 font-medium text-gray-900">{order.id}</td>
-                                                <td className="px-6 py-4">
+                                                <td className="px-4 py-3 font-medium text-gray-900 text-xs">{order.id}</td>
+                                                <td className="px-4 py-3">
                                                     <div>
-                                                        <p className="font-medium text-gray-900">{order.customer}</p>
+                                                        <p className="font-medium text-gray-900 text-xs">{order.customer}</p>
                                                         <p className="text-xs text-gray-500">{order.items} {order.items === 1 ? 'item' : 'items'}</p>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-gray-600">
+                                                <td className="px-4 py-3 text-gray-600">
                                                     <div className="flex flex-col gap-1">
                                                         <span className="flex items-center gap-1 text-xs"><FiClock className="w-3 h-3" /> {order.time}</span>
                                                         <span className="flex items-center gap-1 text-xs font-medium text-[#059669]">Pickup: {order.pickup}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 font-semibold text-gray-900">{order.weight}</td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${order.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
+                                                <td className="px-4 py-3 font-semibold text-gray-900 text-xs">{order.weight}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${order.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
                                                         order.status === 'Ready' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                                                             'bg-amber-50 text-amber-700 border-amber-200'
                                                         }`}>
                                                         {order.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-right">
+                                                <td className="px-4 py-3 text-right">
                                                     {order.status === 'Pending' && (
-                                                        <button 
+                                                        <button
                                                             disabled={updating === order.dbId}
                                                             onClick={() => updateStatus(order.dbId, 'ready')}
-                                                            className="text-xs font-medium text-white bg-[#059669] px-3 py-1.5 rounded-lg hover:bg-[#047857] transition-colors disabled:opacity-50"
+                                                            className="text-xs font-medium text-white bg-[#059669] px-2.5 py-1.5 rounded-lg hover:bg-[#047857] transition-colors disabled:opacity-50"
                                                         >
                                                             {updating === order.dbId ? '...' : 'Mark Ready'}
                                                         </button>
                                                     )}
                                                     {order.status === 'Ready' && (
-                                                        <button 
+                                                        <button
                                                             disabled={updating === order.dbId}
                                                             onClick={() => updateStatus(order.dbId, 'completed')}
-                                                            className="text-xs font-medium text-white bg-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                                            className="text-xs font-medium text-white bg-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                                                         >
                                                             {updating === order.dbId ? '...' : 'Complete'}
                                                         </button>
@@ -247,7 +249,7 @@ export default function DashboardPage() {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                                            <td colSpan="6" className="px-4 py-10 text-center text-gray-500 text-sm">
                                                 No recent orders found.
                                             </td>
                                         </tr>

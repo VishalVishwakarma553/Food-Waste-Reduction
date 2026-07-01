@@ -23,6 +23,16 @@ model User {
   // NGO-specific
   ngoRegNumber  String?
   contactPerson String?
+  website       String?
+  serviceRadius Float?    @default(15)
+  documentReg   String?
+  documentDeed  String?
+  document12A   String?
+  document80G   String?
+  documentRegStatus  String? @default("No Document")
+  documentDeedStatus String? @default("No Document")
+  document12AStatus  String? @default("No Document")
+  document80GStatus  String? @default("No Document")
 
   // Location (all roles)
   address       String?
@@ -48,6 +58,12 @@ model User {
   notifEmailDigest    Boolean @default(false)
   notifSmsOrders      Boolean @default(true)
   notifSmsListings    Boolean @default(false)
+
+  // Notification preferences (NGO)
+  notifNgoDonations   Boolean @default(true)
+  notifNgoStatus      Boolean @default(true)
+  notifNgoSms         Boolean @default(false)
+  notifNgoDigest      Boolean @default(true)
 
   // Privacy preferences (consumer)
   privacyShowLeaderboard Boolean @default(true)
@@ -153,4 +169,32 @@ model Favorite {
   createdAt DateTime    @default(now())
 
   @@unique([userId, listingId])
+}
+
+model Beneficiary {
+  id            Int            @id @default(autoincrement())
+  ngoId         Int
+  name          String
+  type          String
+  location      String
+  size          Int
+  contactPhone  String?
+  notes         String?
+  mealsReceived Int            @default(0)
+  lastServed    String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  distributions Distribution[]
+}
+
+model Distribution {
+  id             Int         @id @default(autoincrement())
+  ngoId          Int
+  beneficiaryId  Int
+  beneficiary    Beneficiary @relation(fields: [beneficiaryId], references: [id], onDelete: Cascade)
+  orderId        Int?
+  foodItems      String
+  quantity       Float
+  unit           String      @default("kg")
+  distributedAt  DateTime    @default(now())
 }

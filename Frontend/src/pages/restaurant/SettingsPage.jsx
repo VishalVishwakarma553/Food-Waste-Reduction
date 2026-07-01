@@ -97,32 +97,32 @@ export default function SettingsPage() {
     const displayPreview = imagePreview || currentImageUrl;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6 pb-12">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 pb-12">
             <div>
-                <h1 className="text-2xl font-bold text-[#064E3B]">Settings</h1>
-                <p className="text-[#065F46] mt-1">Manage your business profile, operating hours, and preferences.</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">Settings</h1>
+                <p className="text-[#065F46] mt-1 text-sm">Manage your business profile, operating hours, and preferences.</p>
             </div>
 
             {/* Profile Section */}
             <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-[#111827]">Business Profile</h2>
+                <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h2 className="text-base sm:text-lg font-bold text-[#111827]">Business Profile</h2>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="btn-primary py-2 px-4 shadow-sm h-10 min-w-[120px] flex items-center justify-center gap-2"
+                        className="btn-primary py-2 px-4 shadow-sm h-10 min-w-[120px] flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
                         {loading ? <div className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin" /> : <><FiSave /> Save Changes</>}
                     </button>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                     {/* Business Image Upload */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">Business Logo / Cover Image</label>
-                        <div className="flex items-center gap-6">
+                        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Business Logo / Cover Image</label>
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
                             {/* Image Preview */}
-                            <div className="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-gray-200 shadow-sm flex-shrink-0 bg-gray-100">
+                            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-gray-200 shadow-sm flex-shrink-0 bg-gray-100">
                                 {displayPreview ? (
                                     <img
                                         src={displayPreview}
@@ -138,16 +138,16 @@ export default function SettingsPage() {
                                     <button
                                         type="button"
                                         onClick={clearImage}
-                                        className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow"
+                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow"
                                     >
-                                        <FiX className="w-3.5 h-3.5" />
+                                        <FiX className="w-3 h-3" />
                                     </button>
                                 )}
                             </div>
 
                             {/* Upload area */}
-                            <div className="flex-1">
-                                <p className="text-sm text-gray-600 mb-3">
+                            <div className="flex-1 min-w-0">
+                                <p className="text-xs sm:text-sm text-gray-600 mb-2.5">
                                     Upload a logo or cover photo for your business. This appears on your dashboard and public profile.
                                 </p>
                                 <input
@@ -160,12 +160,12 @@ export default function SettingsPage() {
                                 />
                                 <label
                                     htmlFor="businessImageInput"
-                                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
                                 >
-                                    <FiCamera className="w-4 h-4 text-[#059669]" />
+                                    <FiCamera className="w-3.5 h-3.5 text-[#059669]" />
                                     {displayPreview ? 'Change Image' : 'Upload Image'}
                                 </label>
-                                <p className="text-xs text-gray-400 mt-2">JPEG, PNG or WEBP · Max 5MB</p>
+                                <p className="text-[10px] text-gray-400 mt-1.5">JPEG, PNG or WEBP · Max 5MB</p>
                             </div>
                         </div>
                     </div>

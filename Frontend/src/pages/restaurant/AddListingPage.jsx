@@ -85,6 +85,7 @@ export default function AddListingPage() {
     };
 
     const handlePublish = async (status = 'active') => {
+        const finalStatus = typeof status === 'string' ? status : 'active';
         if (!formData.name || !formData.category) {
             toast.error('Please fill in the food name and category before publishing.');
             return;
@@ -116,7 +117,7 @@ export default function AddListingPage() {
             fd.append('delivery', formData.delivery);
             fd.append('allergens', JSON.stringify(formData.allergens));
             fd.append('dietary', JSON.stringify(formData.dietary));
-            fd.append('status', status);
+            fd.append('status', finalStatus);
 
             // Attach image files
             formData.images.forEach(img => {
@@ -127,7 +128,7 @@ export default function AddListingPage() {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            toast.success(status === 'draft' ? 'Draft saved successfully.' : 'Listing published successfully!');
+            toast.success(finalStatus === 'draft' ? 'Draft saved successfully.' : 'Listing published successfully!');
             navigate('/restaurant/listings');
         } catch (err) {
             toast.error(err.response?.data?.error || 'Failed to save listing. Please try again.');
@@ -135,18 +136,18 @@ export default function AddListingPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#111827]">Add New Listing</h1>
-                    <p className="text-gray-500 text-sm mt-1">Create a new food listing to rescue surplus food.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-[#111827]">Add New Listing</h1>
+                    <p className="text-gray-500 text-xs sm:text-sm mt-1">Create a new food listing to rescue surplus food.</p>
                 </div>
-                <div className="flex gap-3">
-                    <button onClick={() => handlePublish('draft')} className="px-4 py-2 font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+                <div className="flex gap-2 w-full sm:w-auto">
+                    <button onClick={() => handlePublish('draft')} className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors flex-1 sm:flex-none justify-center">
                         Save Draft
                     </button>
                     {currentStep === STEPS.length && (
-                        <button onClick={() => handlePublish('active')} className="px-4 py-2 font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors">
+                        <button onClick={() => handlePublish('active')} className="px-3 py-2 text-sm font-medium text-white bg-[#059669] rounded-xl hover:bg-[#047857] transition-colors flex-1 sm:flex-none justify-center">
                             Publish Listing
                         </button>
                     )}
@@ -609,7 +610,7 @@ export default function AddListingPage() {
                     </button>
                 ) : (
                     <button
-                        onClick={handlePublish}
+                        onClick={() => handlePublish('active')}
                         className="flex items-center gap-2 px-8 py-2.5 rounded-xl font-bold text-white bg-[#059669] hover:bg-[#047857] transition-colors shadow-sm shadow-[#059669]/20"
                     >
                         Publish Now <FiCheck className="w-5 h-5" />

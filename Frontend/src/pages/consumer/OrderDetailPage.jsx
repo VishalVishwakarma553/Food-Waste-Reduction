@@ -4,9 +4,16 @@ import { FiCheckCircle, FiClock, FiMapPin, FiPhone, FiChevronLeft, FiRefreshCw }
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
 
-const statusFlow = ['pending', 'confirmed', 'ready', 'completed'];
+const statusFlow = ['pending', 'confirmed', 'approved', 'completed'];
 
-const statusLabel = { pending: 'Order Placed', confirmed: 'Confirmed', ready: 'Ready for Pickup', completed: 'Completed', cancelled: 'Cancelled' };
+const statusLabel = { 
+    pending: 'Order Placed', 
+    confirmed: 'Confirmed', 
+    approved: 'Ready for Pickup', 
+    ready: 'Ready for Pickup',
+    completed: 'Completed', 
+    cancelled: 'Cancelled' 
+};
 
 export default function OrderDetailPage() {
     const { id } = useParams();
@@ -14,6 +21,7 @@ export default function OrderDetailPage() {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [cancelling, setCancelling] = useState(false);
+    const [completing, setCompleting] = useState(false);
 
     useEffect(() => {
         api.get(`/consumer/orders/${id}`)
@@ -36,10 +44,25 @@ export default function OrderDetailPage() {
         }
     };
 
+    const handleComplete = async () => {
+        if (!confirm('Mark this order as completed?')) return;
+        setCompleting(true);
+        try {
+            const r = await api.patch(`/consumer/orders/${id}/complete`);
+            setOrder(r.data.order);
+            toast.success('Order completed! Thank you for rescuing food.');
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to complete order');
+        } finally {
+            setCompleting(false);
+        }
+    };
+
     if (loading) return <div className="text-center py-20 text-[#065F46]">Loading...</div>;
     if (!order) return <div className="text-center py-20 text-[#064E3B]">Order not found.</div>;
 
-    const currentStep = statusFlow.indexOf(order.status);
+    const statusVal = order.status === 'ready' ? 'approved' : order.status;
+    const currentStep = statusFlow.indexOf(statusVal);
     const stepsToShow = order.status === 'cancelled'
         ? [{ status: 'pending', label: 'Order Placed' }, { status: 'cancelled', label: 'Cancelled' }]
         : statusFlow.map(s => ({ status: s, label: statusLabel[s] }));
@@ -47,7 +70,7 @@ export default function OrderDetailPage() {
     const statusCls =
         order.status === 'completed' ? 'status-completed' :
         order.status === 'confirmed' ? 'status-confirmed' :
-        order.status === 'ready' ? 'status-ready' :
+        (order.status === 'approved' || order.status === 'ready') ? 'status-ready' :
         order.status === 'cancelled' ? 'status-cancelled' : 'status-pending';
 
     return (
@@ -157,7 +180,16 @@ export default function OrderDetailPage() {
                                     <FiRefreshCw className="w-4 h-4" /> Order Again
                                 </Link>
                             )}
-                            {['pending', 'confirmed'].includes(order.status) && (
+                            {(order.status === 'approved' || order.status === 'ready') && (
+                                <button
+                                    onClick={handleComplete}
+                                    disabled={completing}
+                                    className="w-full py-2.5 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white text-sm font-semibold cursor-pointer transition-colors disabled:opacity-60 flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
+                                >
+                                    {completing ? 'Completing...' : <><FiCheckCircle className="w-4 h-4" /> Mark Complete</>}
+                                </button>
+                            )}
+                            {['pending', 'confirmed', 'approved', 'ready'].includes(order.status) && (
                                 <button
                                     onClick={handleCancel}
                                     disabled={cancelling}

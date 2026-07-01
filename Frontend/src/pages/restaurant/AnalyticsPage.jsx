@@ -69,22 +69,22 @@ export default function AnalyticsPage() {
     const { metrics, weeklyImpact, foodSavedData, categoryData } = analytics;
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-[#064E3B]">Performance Analytics</h1>
-                    <p className="text-[#065F46] mt-1">Detailed insights into your sales and environmental impact.</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-[#064E3B]">Performance Analytics</h1>
+                    <p className="text-[#065F46] mt-1 text-sm">Detailed insights into your sales and environmental impact.</p>
                 </div>
                 <button 
                     onClick={handleExport}
-                    className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                    className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm w-full sm:w-auto justify-center"
                 >
                     <FiDownload className="w-4 h-4" /> Export Report
                 </button>
             </div>
 
             {/* Top Metrics Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <MetricCard icon={FiTrendingUp} label="Total Meals Provided" value={metrics.totalMealsProvided} trend={metrics.mealsTrend} />
                 <MetricCard icon={FiShoppingBag} label="Total Pickups" value={metrics.totalPickups} trend={metrics.pickupsTrend} />
                 <MetricCard icon={FiTrendingUp} label="Food Saved" value={`${metrics.totalFoodSavedKg} kg`} trend={metrics.kgTrend} />
@@ -95,11 +95,11 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Impact Overview */}
-                <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6 lg:col-span-2">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-bold text-[#111827]">Meals Provided & Pickups (This Week)</h2>
+                <div className="bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-4 sm:p-6 lg:col-span-2">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <h2 className="text-base sm:text-lg font-bold text-[#111827]">Meals Provided & Pickups (This Week)</h2>
                     </div>
-                    <div className="h-80">
+                    <div className="h-56 sm:h-80">
                         {weeklyImpact.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={weeklyImpact} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
