@@ -6,7 +6,7 @@ import {
     FiBell, FiUser, FiLogOut, FiStar, FiFeather, FiCamera, FiX
 } from 'react-icons/fi';
 
-const API_BASE = 'http://localhost:8080';
+import { IMG_BASE_URL } from '../../lib/api';
 
 const navItems = [
     { to: '/consumer/dashboard', icon: FiGrid, label: 'Dashboard' },
@@ -49,7 +49,7 @@ export default function ConsumerSidebar({ onClose }) {
             <div className="p-4 border-b border-[#D1FAE5]">
                 <div className="flex items-center gap-3">
                     {user?.avatar ? (
-                        <img src={`${API_BASE}${user.avatar}`} alt={user?.name}
+                        <img src={`${IMG_BASE_URL}${user.avatar}`} alt={user?.name}
                             className="w-10 h-10 rounded-full object-cover ring-2 ring-[#D1FAE5] shrink-0"
                             onError={(e) => { e.target.style.display = 'none'; }} />
                     ) : (

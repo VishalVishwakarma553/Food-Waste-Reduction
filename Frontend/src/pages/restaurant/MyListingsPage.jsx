@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 
-const API_BASE = 'http://localhost:8080';
+import { BASE_URL, IMG_BASE_URL } from '../../lib/api';
 const TABS = ['All', 'active', 'draft', 'expired'];
 const TAB_LABELS = { All: 'All', active: 'Active', draft: 'Draft', expired: 'Expired' };
 
@@ -103,7 +103,7 @@ export default function MyListingsPage() {
         setExportLoading(true);
         try {
             const token = localStorage.getItem('foodsave_token');
-            const res = await fetch(`${API_BASE}/api/restaurant/listings/export`, {
+            const res = await fetch(`${BASE_URL}/restaurant/listings/export`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (!res.ok) throw new Error('Export failed');
@@ -132,7 +132,7 @@ export default function MyListingsPage() {
     const getFirstImage = (images) => {
         try {
             const arr = typeof images === 'string' ? JSON.parse(images) : images;
-            return arr?.[0] ? `${API_BASE}${arr[0]}` : null;
+            return arr?.[0] ? `${IMG_BASE_URL}${arr[0]}` : null;
         } catch { return null; }
     };
 

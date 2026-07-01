@@ -14,12 +14,12 @@ const navItems = [
     { to: '/restaurant/settings', icon: FiSettings, label: 'Settings' },
 ];
 
-const API_BASE = 'http://localhost:8080';
+import { IMG_BASE_URL } from '../../lib/api';
 
 export default function RestaurantSidebar({ onClose }) {
     const { user, logout } = useAuth();
     const displayName = user?.businessName || user?.name || 'Your Business';
-    const logoUrl = user?.businessImage ? `${API_BASE}${user.businessImage}` : null;
+    const logoUrl = user?.businessImage ? `${IMG_BASE_URL}${user.businessImage}` : null;
 
     return (
         <aside className="w-64 h-screen bg-white border-r border-[#D1FAE5] flex flex-col shadow-sm">

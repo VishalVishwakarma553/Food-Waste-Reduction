@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const BASE_URL = 'http://localhost:8080/api';
-export const IMG_BASE_URL = 'http://localhost:8080';
+export const BASE_URL = 'https://food-waste-reduction-xj0d.onrender.com/api';
+export const IMG_BASE_URL = 'https://food-waste-reduction-xj0d.onrender.com';
 
 const api = axios.create({
     baseURL: BASE_URL,

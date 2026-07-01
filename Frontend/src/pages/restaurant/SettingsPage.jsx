@@ -4,7 +4,7 @@ import { FiSave, FiMapPin, FiClock, FiCamera, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import LocationPicker from '../../components/shared/LocationPicker';
 
-const API_BASE = 'http://localhost:8080';
+import { IMG_BASE_URL } from '../../lib/api';
 
 // Default fallback image — a restaurant/building icon placeholder
 function BusinessImageFallback({ name }) {
@@ -24,7 +24,7 @@ export default function SettingsPage() {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
 
-    const currentImageUrl = user?.businessImage ? `${API_BASE}${user.businessImage}` : null;
+    const currentImageUrl = user?.businessImage ? `${IMG_BASE_URL}${user.businessImage}` : null;
 
     const [profile, setProfile] = useState({
         name: user?.name || '',

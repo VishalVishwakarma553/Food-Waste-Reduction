@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiHeart, FiBell, FiTrash2, FiShoppingCart, FiLoader } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 
-const API_BASE = 'http://localhost:8080';
+import { IMG_BASE_URL } from '../../lib/api';
 
 export default function FavoritesPage() {
     const { favoriteItems, toggleFavorite, favoriteRestaurants, toggleFavoriteRestaurant, addToCart, favLoading } = useCart();
@@ -51,7 +51,7 @@ export default function FavoritesPage() {
                             return (
                                 <div key={food.id} className={`card overflow-hidden ${isExpired ? 'opacity-60' : ''}`}>
                                     <div className="relative">
-                                        <img src={food.images?.[0]} alt={food.name}
+                                        <img src={food.images?.[0]?.startsWith('http') ? food.images[0] : `${IMG_BASE_URL}${food.images?.[0]}`} alt={food.name}
                                             className="w-full h-44 object-cover" />
                                         <span className="food-card-discount">{food.discount}% OFF</span>
                                         {isExpired && (

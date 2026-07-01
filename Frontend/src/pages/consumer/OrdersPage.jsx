@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiChevronRight } from 'react-icons/fi';
-import api from '../../lib/api';
+import api, { IMG_BASE_URL } from '../../lib/api';
 
 const tabs = ['All', 'Active', 'Completed', 'Cancelled'];
 
@@ -82,7 +82,7 @@ export default function OrdersPage() {
                                 className="card-flat p-5 flex items-center gap-4 hover:border-[#10B981] transition-all cursor-pointer block"
                             >
                                 {image
-                                    ? <img src={`http://localhost:8080${image}`} alt="" className="w-14 h-14 rounded-2xl object-cover shrink-0" />
+                                    ? <img src={`${IMG_BASE_URL}${image}`} alt="" className="w-14 h-14 rounded-2xl object-cover shrink-0" />
                                     : <div className="w-14 h-14 rounded-2xl bg-[#D1FAE5] flex items-center justify-center text-2xl shrink-0">🍱</div>
                                 }
                                 <div className="flex-1 min-w-0">

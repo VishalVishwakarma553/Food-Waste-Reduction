@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FiCheckCircle, FiClock, FiMapPin, FiPhone, FiChevronLeft, FiRefreshCw } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import api from '../../lib/api';
+import api, { IMG_BASE_URL } from '../../lib/api';
 
 const statusFlow = ['pending', 'confirmed', 'approved', 'completed'];
 
@@ -124,7 +124,7 @@ export default function OrderDetailPage() {
                             {order.items.map(item => (
                                 <div key={item.id} className="flex items-center gap-4">
                                     {item.image
-                                        ? <img src={`http://localhost:8080${item.image}`} alt={item.name} className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                                        ? <img src={`${IMG_BASE_URL}${item.image}`} alt={item.name} className="w-14 h-14 rounded-xl object-cover shrink-0" />
                                         : <div className="w-14 h-14 rounded-xl bg-[#D1FAE5] flex items-center justify-center text-2xl shrink-0">🍱</div>
                                     }
                                     <div className="flex-1 min-w-0">

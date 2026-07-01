@@ -7,9 +7,9 @@ import {
     FiLoader, FiAlertCircle, FiTag, FiInfo
 } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
-import api from '../../lib/api';
+import api, { IMG_BASE_URL } from '../../lib/api';
 
-const API_BASE = 'http://localhost:8080';
+const API_BASE = IMG_BASE_URL;
 
 // Live countdown badge
 function CountdownTimer({ expiresAt }) {

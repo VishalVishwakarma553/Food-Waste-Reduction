@@ -2,10 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { FiEdit2, FiCamera, FiSave, FiLock, FiBell, FiTrash2, FiCheckCircle, FiX, FiEye, FiEyeOff } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../lib/api';
+import api, { IMG_BASE_URL } from '../../lib/api';
 import LocationPicker from '../../components/shared/LocationPicker';
 
-const API_BASE = 'http://localhost:8080';
 const tabs = ['Profile', 'Security', 'Notifications', 'Privacy'];
 
 // Reusable toggle row
@@ -99,18 +98,14 @@ export default function ProfilePage() {
             setAvatarPreview(null);
             toast.success('Profile updated!');
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Save failed');
+            toast.error(err.response?.data?.error || 'Failed to update profile');
         } finally {
             setSaving(false);
         }
     };
 
     const handleCancelEdit = () => {
-        setEditing(false);
-        setAvatarFile(null);
-        setAvatarPreview(null);
-        // reset form to loaded profile
-        if (profile) setForm({
+        setForm({
             name: profile.name || '',
             phone: profile.phone || '',
             email: profile.email || '',
@@ -199,7 +194,7 @@ export default function ProfilePage() {
     }
 
     const avatarSrc = avatarPreview
-        || (profile?.avatar ? `${API_BASE}${profile.avatar}` : null);
+        || (profile?.avatar ? `${IMG_BASE_URL}${profile.avatar}` : null);
 
     return (
         <div className="space-y-4 sm:space-y-6">

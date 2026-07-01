@@ -11,13 +11,13 @@ import { useState, useEffect } from 'react';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 
-const API_BASE = 'http://localhost:8080';
+import { IMG_BASE_URL } from '../../lib/api';
 
 export default function DashboardPage() {
     const { user } = useAuth();
     const displayName = user?.businessName || user?.name || 'Your Business';
     const logoUrl = user?.businessImage
-        ? `${API_BASE}${user.businessImage}`
+        ? `${IMG_BASE_URL}${user.businessImage}`
         : null;
 
     const [loading, setLoading] = useState(true);
