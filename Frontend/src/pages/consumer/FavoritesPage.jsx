@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiHeart, FiBell, FiTrash2, FiShoppingCart, FiLoader } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
-
+import FoodCardSkeleton from '../../components/shared/FoodCardSkeleton';
 import { IMG_BASE_URL } from '../../lib/api';
 
 export default function FavoritesPage() {
@@ -29,9 +29,10 @@ export default function FavoritesPage() {
 
             {/* Loading state */}
             {favLoading && activeTab === 'food' && (
-                <div className="text-center py-20">
-                    <FiLoader className="w-8 h-8 animate-spin mx-auto text-[#059669] mb-3" />
-                    <p className="text-[#065F46]">Loading favorites...</p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {['skel-1', 'skel-2', 'skel-3'].map(key => (
+                        <FoodCardSkeleton key={key} />
+                    ))}
                 </div>
             )}
 

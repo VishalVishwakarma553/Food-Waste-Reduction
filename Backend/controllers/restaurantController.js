@@ -128,6 +128,18 @@ export async function getListings(req, res) {
     res.json({ listings });
 }
 
+// GET /api/restaurant/listings/:id  - Get a single listing by ID (owned by current restaurant)
+export async function getListingById(req, res) {
+    const listingId = parseInt(req.params.id);
+    if (isNaN(listingId)) return res.status(400).json({ error: "Invalid listing ID" });
+
+    const listing = await prisma.foodListing.findFirst({
+        where: { id: listingId, restaurantId: req.user.id }
+    });
+    if (!listing) return res.status(404).json({ error: "Listing not found" });
+    res.json({ listing });
+}
+
 // GET /api/restaurant/stats  - Listing counts by status for dashboard
 export async function getStats(req, res) {
     const [total, active, draft] = await Promise.all([
@@ -173,7 +185,7 @@ export async function updateListing(req, res) {
         expiryDate, expiryTime, availableFrom, availableUntil,
         ingredients, allergens, dietary, storage,
         pickup, delivery, deliveryRadius, packaging, instructions,
-        status
+        status, existingImages
     } = req.body;
 
     const data = {};
@@ -205,6 +217,17 @@ export async function updateListing(req, res) {
         if (typeof status === 'string' && allowedStatuses.includes(status)) {
             data.status = status;
         }
+    }
+
+    // Build final image array: kept existing paths + newly uploaded files
+    const keptImages = existingImages
+        ? (typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages)
+        : [];
+    const newImagePaths = (req.files && req.files.length > 0)
+        ? req.files.map(f => `/uploads/${f.filename}`)
+        : [];
+    if (existingImages !== undefined || (req.files && req.files.length > 0)) {
+        data.images = JSON.stringify([...keptImages, ...newImagePaths]);
     }
 
     const updated = await prisma.foodListing.update({ where: { id: listingId }, data });

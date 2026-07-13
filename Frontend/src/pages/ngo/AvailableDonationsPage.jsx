@@ -6,6 +6,7 @@ import {
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import LeafletMap from '../../components/shared/LeafletMap';
+import FoodCardSkeleton from '../../components/shared/FoodCardSkeleton';
 
 export default function AvailableDonationsPage() {
     const [viewMode, setViewMode] = useState('grid'); // grid | list | map
@@ -269,9 +270,10 @@ export default function AvailableDonationsPage() {
 
                     {/* Listings */}
                     {loading && donations.length === 0 ? (
-                        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center text-gray-500 flex flex-col items-center justify-center">
-                            <FiLoader className="animate-spin text-[#059669] w-8 h-8 mb-3" />
-                            <p className="text-sm font-semibold text-gray-700">Loading donations nearby...</p>
+                        <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'space-y-4'}>
+                            {['skel-1', 'skel-2', 'skel-3', 'skel-4'].map(key => (
+                                <FoodCardSkeleton key={key} />
+                            ))}
                         </div>
                     ) : (
                         viewMode !== 'map' && (

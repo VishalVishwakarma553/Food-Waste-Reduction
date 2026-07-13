@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FiList, FiGrid, FiSliders, FiSearch, FiX } from 'react-icons/fi';
 import FoodCard from '../../components/shared/FoodCard';
+import FoodCardSkeleton from '../../components/shared/FoodCardSkeleton';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../lib/api';
 
@@ -304,9 +305,13 @@ export default function BrowsePage() {
                     </div>
 
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 gap-3">
-                            <div className="w-8 h-8 border-4 border-[#059669] border-t-transparent rounded-full animate-spin" />
-                            <p className="text-[#065F46] text-xs">Updating listings...</p>
+                        <div className={view === 'grid'
+                            ? 'grid sm:grid-cols-2 xl:grid-cols-3 gap-6'
+                            : 'space-y-4'
+                        }>
+                            {['skel-1', 'skel-2', 'skel-3', 'skel-4', 'skel-5', 'skel-6'].map(key => (
+                                <FoodCardSkeleton key={key} />
+                            ))}
                         </div>
                     ) : error ? (
                         <div className="text-center py-20 text-red-600">

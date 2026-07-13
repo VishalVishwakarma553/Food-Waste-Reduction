@@ -36,6 +36,7 @@ import ProfilePage from '../pages/consumer/ProfilePage';
 import RestaurantLayout from '../layouts/RestaurantLayout';
 import RestaurantDashboardPage from '../pages/restaurant/DashboardPage';
 import AddListingPage from '../pages/restaurant/AddListingPage';
+import EditListingPage from '../pages/restaurant/EditListingPage';
 import MyListingsPage from '../pages/restaurant/MyListingsPage';
 import RestaurantOrdersPage from '../pages/restaurant/OrdersPage';
 import AnalyticsPage from '../pages/restaurant/AnalyticsPage';
@@ -136,6 +137,7 @@ export default function AppRouter() {
                 <Route path="/restaurant/dashboard" element={<RestaurantDashboardPage />} />
                 <Route path="/restaurant/add-listing" element={<AddListingPage />} />
                 <Route path="/restaurant/listings" element={<MyListingsPage />} />
+                <Route path="/restaurant/listings/:id/edit" element={<EditListingPage />} />
                 <Route path="/restaurant/orders" element={<RestaurantOrdersPage />} />
                 <Route path="/restaurant/analytics" element={<AnalyticsPage />} />
                 <Route path="/restaurant/notifications" element={<RestaurantNotificationsPage />} />

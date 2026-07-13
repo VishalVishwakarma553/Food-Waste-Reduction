@@ -3,6 +3,7 @@ import { FiSearch, FiFilter, FiDownload, FiPlus, FiGrid, FiList as FiListIcon, F
 import { Link } from 'react-router-dom';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
+import FoodCardSkeleton from '../../components/shared/FoodCardSkeleton';
 
 import { BASE_URL, IMG_BASE_URL } from '../../lib/api';
 const TABS = ['All', 'active', 'draft', 'expired'];
@@ -246,9 +247,13 @@ export default function MyListingsPage() {
                 {/* Content */}
                 <div className="p-4 bg-gray-50/30">
                     {loading ? (
-                        <div className="text-center py-16">
-                            <FiLoader className="w-8 h-8 text-[#059669] animate-spin mx-auto mb-3" />
-                            <p className="text-gray-500 text-sm">Loading listings...</p>
+                        <div className={viewMode === 'grid'
+                            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
+                            : 'space-y-4'
+                        }>
+                            {['skel-1', 'skel-2', 'skel-3', 'skel-4'].map(key => (
+                                <FoodCardSkeleton key={key} />
+                            ))}
                         </div>
                     ) : error ? (
                         <div className="text-center py-16">

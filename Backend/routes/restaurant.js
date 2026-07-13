@@ -9,6 +9,7 @@ import {
     updateSettings,
     createListing,
     getListings,
+    getListingById,
     updateListing,
     deleteListing,
     getStats,
@@ -372,6 +373,7 @@ router.post("/listings", upload.array("images", 5), createListing);
  *       200:
  *         description: Listing updated successfully
  */
+router.get("/listings/:id", getListingById);
 router.patch("/listings/:id", upload.array("images", 5), updateListing);
 
 /**

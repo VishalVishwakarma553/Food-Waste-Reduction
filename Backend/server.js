@@ -26,6 +26,11 @@ app.use(express.json());
 // Serve uploaded images as static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// health check route
+app.get("/", (_, res) => {
+    res.json({ message: "Server is running" });
+});
+
 // Swagger Configuration
 const swaggerOptions = {
     definition: {

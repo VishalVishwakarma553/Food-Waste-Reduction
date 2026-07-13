@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { FiSearch, FiGrid, FiList, FiSliders, FiX, FiHeart, FiLoader, FiAlertCircle, FiRefreshCw } from 'react-icons/fi';
 import FoodCard from '../../components/shared/FoodCard';
+import FoodCardSkeleton from '../../components/shared/FoodCardSkeleton';
 import { useCart } from '../../context/CartContext';
 import api from '../../lib/api';
 
@@ -294,9 +295,13 @@ export default function ListingsPage() {
 
                     {/* Loading */}
                     {loading && (
-                        <div className="flex flex-col items-center justify-center py-24 gap-4">
-                            <FiLoader className="w-10 h-10 text-[#059669] animate-spin" />
-                            <p className="text-[#065F46] text-sm">Finding food near you...</p>
+                        <div className={view === 'grid'
+                            ? 'grid sm:grid-cols-2 xl:grid-cols-3 gap-6'
+                            : 'space-y-4'
+                        }>
+                            {['skel-1', 'skel-2', 'skel-3', 'skel-4', 'skel-5', 'skel-6'].map(key => (
+                                <FoodCardSkeleton key={key} />
+                            ))}
                         </div>
                     )}
 
