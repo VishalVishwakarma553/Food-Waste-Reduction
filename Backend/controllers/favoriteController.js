@@ -60,7 +60,12 @@ export async function getFavorites(req, res) {
     try {
         const userId = req.user.id;
         const rows = await prisma.favorite.findMany({
-            where: { userId },
+            where: {
+                userId,
+                listing: {
+                    status: { not: "deleted" }
+                }
+            },
             include: {
                 listing: {
                     include: {
@@ -85,9 +90,9 @@ export async function toggleFavorite(req, res) {
         const listingId = parseInt(req.params.listingId);
         if (isNaN(listingId)) return res.status(400).json({ error: "Invalid listing ID" });
 
-        // Check if listing exists
+        // Check if listing exists and is not deleted
         const listing = await prisma.foodListing.findUnique({ where: { id: listingId } });
-        if (!listing) return res.status(404).json({ error: "Listing not found" });
+        if (!listing || listing.status === "deleted") return res.status(404).json({ error: "Listing not found" });
 
         const existing = await prisma.favorite.findUnique({
             where: { userId_listingId: { userId, listingId } }

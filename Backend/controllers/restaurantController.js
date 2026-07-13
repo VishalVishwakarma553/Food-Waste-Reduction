@@ -118,7 +118,11 @@ export async function createListing(req, res) {
 export async function getListings(req, res) {
     const { search, status } = req.query;
     const where = { restaurantId: req.user.id };
-    if (status && status !== 'All') where.status = status.toLowerCase();
+    if (status && status !== 'All') {
+        where.status = status.toLowerCase();
+    } else {
+        where.status = { not: 'deleted' };
+    }
     if (search) where.name = { contains: search, mode: 'insensitive' };
 
     const listings = await prisma.foodListing.findMany({
@@ -143,7 +147,7 @@ export async function getListingById(req, res) {
 // GET /api/restaurant/stats  - Listing counts by status for dashboard
 export async function getStats(req, res) {
     const [total, active, draft] = await Promise.all([
-        prisma.foodListing.count({ where: { restaurantId: req.user.id } }),
+        prisma.foodListing.count({ where: { restaurantId: req.user.id, status: { not: 'deleted' } } }),
         prisma.foodListing.count({ where: { restaurantId: req.user.id, status: 'active' } }),
         prisma.foodListing.count({ where: { restaurantId: req.user.id, status: 'draft' } }),
     ]);
@@ -153,7 +157,7 @@ export async function getStats(req, res) {
 // GET /api/restaurant/listings/export  - Download listings as CSV
 export async function exportListingsCSV(req, res) {
     const listings = await prisma.foodListing.findMany({
-        where: { restaurantId: req.user.id },
+        where: { restaurantId: req.user.id, status: { not: 'deleted' } },
         orderBy: { createdAt: 'desc' }
     });
 
@@ -236,14 +240,32 @@ export async function updateListing(req, res) {
 
 // DELETE /api/restaurant/listings/:id  - Delete a listing
 export async function deleteListing(req, res) {
-    const listingId = parseInt(req.params.id);
-    const existing = await prisma.foodListing.findFirst({
-        where: { id: listingId, restaurantId: req.user.id }
-    });
-    if (!existing) return res.status(404).json({ error: "Listing not found" });
+    try {
+        const listingId = parseInt(req.params.id);
+        if (isNaN(listingId)) return res.status(400).json({ error: "Invalid listing ID" });
 
-    await prisma.foodListing.delete({ where: { id: listingId } });
-    res.json({ message: "Listing deleted successfully" });
+        const existing = await prisma.foodListing.findFirst({
+            where: { id: listingId, restaurantId: req.user.id }
+        });
+        if (!existing) return res.status(404).json({ error: "Listing not found" });
+
+        // Update status to "deleted" (soft delete) instead of deleting from database
+        // to preserve foreign key references in OrderItem and keep stats/history intact.
+        await prisma.foodListing.update({
+            where: { id: listingId },
+            data: { status: "deleted" }
+        });
+
+        // Also clean up favorites for this listing, since it is no longer available
+        await prisma.favorite.deleteMany({
+            where: { listingId }
+        });
+
+        res.json({ message: "Listing deleted successfully" });
+    } catch (err) {
+        console.error("deleteListing error:", err);
+        res.status(500).json({ error: "Failed to delete listing" });
+    }
 }
 
 // GET /api/restaurant/dashboard - get dynamic dashboard stats, recent orders, weekly impact, and alerts
@@ -253,7 +275,7 @@ export async function getRestaurantDashboard(req, res) {
 
         // 1. Get Listings Stats (Active, Draft, Expired, Total)
         const [totalListings, activeListings, draftListings] = await Promise.all([
-            prisma.foodListing.count({ where: { restaurantId } }),
+            prisma.foodListing.count({ where: { restaurantId, status: { not: 'deleted' } } }),
             prisma.foodListing.count({ where: { restaurantId, status: 'active' } }),
             prisma.foodListing.count({ where: { restaurantId, status: 'draft' } }),
         ]);
